@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVUS — Merch</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--black:#0A0A0A;--white:#FAFAF8;--border:rgba(255,255,255,0.07);--border-light:rgba(0,0,0,0.08);--serif:'Cormorant Garamond',serif;--sans:'Inter',sans-serif;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--white);color:var(--black);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:none;}
+#cur{width:7px;height:7px;background:var(--black);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cur-r{width:34px;height:34px;border:1px solid rgba(0,0,0,0.2);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+.nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;background:rgba(250,250,248,0.96);backdrop-filter:blur(18px);border-bottom:1px solid var(--border-light);}
+.nav-logo{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:0.38em;color:var(--black);text-transform:uppercase;text-decoration:none;cursor:none;transition:opacity .3s;}
+.nav-logo:hover{opacity:.5;}
+.nav-links{display:flex;gap:2.5rem;}
+.nl{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(0,0,0,0.4);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;position:relative;}
+.nl::after{content:'';position:absolute;bottom:-2px;left:0;right:100%;height:1px;background:var(--black);transition:right .35s;}
+.nl:hover{color:var(--black);}
+.nl:hover::after,.nl.active::after{right:0;}
+.nl.active{color:var(--black);}
+.nav-right{display:flex;gap:1.75rem;}
+.nr{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(0,0,0,0.35);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;}
+.nr:hover{color:var(--black);}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .85s,transform .85s;}
+.rv.on{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.35s;}
+
+/* PAGE HEADER */
+.page-header{padding:10rem 3rem 5rem;background:var(--black);position:relative;overflow:hidden;}
+.page-header-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1556306535-38febf6cdbe4?w=1600&q=85&fit=crop') center/cover;filter:brightness(.1) contrast(1.1);}
+.page-header-content{position:relative;z-index:2;}
+.ph-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.55em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:1rem;}
+.ph-title{font-family:var(--serif);font-weight:400;font-size:clamp(52px,8vw,110px);color:var(--white);letter-spacing:0.04em;line-height:1.02;}
+.ph-title em{font-style:italic;font-weight:300;}
+.ph-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.38em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-top:1.5rem;}
+
+/* INTRO */
+.intro{padding:5rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center;background:var(--white);}
+.intro-title{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4vw,50px);color:var(--black);letter-spacing:0.03em;line-height:1.1;}
+.intro-title em{font-style:italic;font-weight:300;}
+.rule{height:1px;background:var(--border-light);margin:2rem 0;}
+.intro-body{font-family:var(--serif);font-weight:300;font-size:18px;color:rgba(0,0,0,.5);line-height:2;}
+.intro-body em{font-style:italic;color:rgba(0,0,0,.7);}
+
+/* MERCH GRID */
+.merch-sec{padding:0 3rem 6rem;background:var(--white);}
+.merch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-light);}
+.mc{background:var(--white);cursor:none;overflow:hidden;position:relative;}
+.mc-iw{aspect-ratio:1;overflow:hidden;position:relative;}
+.mc-img{width:100%;height:100%;object-fit:cover;filter:brightness(.88);transition:transform .9s cubic-bezier(.25,.46,.45,.94),filter .55s;}
+.mc:hover .mc-img{transform:scale(1.06);filter:brightness(.96);}
+.mc-hover{position:absolute;bottom:0;left:0;right:0;background:var(--black);color:var(--white);font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.38em;text-transform:uppercase;padding:13px;text-align:center;transform:translateY(100%);transition:transform .32s cubic-bezier(.25,.46,.45,.94);}
+.mc:hover .mc-hover{transform:translateY(0);}
+.mc-info{padding:1.25rem 1.25rem 1.75rem;background:var(--white);}
+.mc-name{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--black);margin-bottom:3px;}
+.mc-detail{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.3em;color:rgba(0,0,0,.3);text-transform:uppercase;margin-bottom:.875rem;}
+.mc-price{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--black);}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:800;backdrop-filter:blur(10px);align-items:center;justify-content:center;opacity:0;transition:opacity .4s;}
+.mo.open{display:flex;}
+.mo.vis{opacity:1;}
+.mo-panel{background:var(--white);width:88%;max-width:800px;max-height:88vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;position:relative;transform:translateY(18px);transition:transform .42s;}
+.mo.vis .mo-panel{transform:translateY(0);}
+.mo-img{aspect-ratio:1;overflow:hidden;}
+.mo-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.88);}
+.mo-body{padding:3rem;display:flex;flex-direction:column;justify-content:center;}
+.mo-close{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;color:rgba(0,0,0,.35);cursor:none;text-transform:uppercase;}
+.mo-close:hover{color:var(--black);}
+.mo-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;color:rgba(0,0,0,.32);text-transform:uppercase;margin-bottom:.75rem;}
+.mo-name{font-family:var(--serif);font-weight:400;font-size:30px;color:var(--black);margin-bottom:2rem;}
+.mo-price{font-family:var(--serif);font-style:italic;font-size:30px;color:var(--black);margin-bottom:2rem;}
+.mo-szl{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;color:rgba(0,0,0,.35);text-transform:uppercase;margin-bottom:.75rem;}
+.mo-sizes{display:flex;gap:6px;margin-bottom:2rem;}
+.sz{width:40px;height:40px;border:1px solid rgba(0,0,0,.12);background:none;font-family:var(--sans);font-weight:300;font-size:9px;color:var(--black);cursor:none;transition:all .2s;}
+.sz.a,.sz:hover{border-color:var(--black);background:var(--black);color:var(--white);}
+.mo-add{width:100%;background:var(--black);color:var(--white);font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;text-transform:uppercase;padding:15px;border:none;cursor:none;margin-bottom:1rem;transition:opacity .3s;}
+.mo-add:hover{opacity:.75;}
+.mo-wish{width:100%;background:none;color:var(--black);font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;text-transform:uppercase;padding:14px;border:1px solid rgba(0,0,0,.1);cursor:none;transition:border-color .2s;}
+.mo-wish:hover{border-color:var(--black);}
+.mo-specs{margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border-light);}
+.msp{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-light);}
+.msp:last-child{border-bottom:none;}
+.msp-k{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.35em;color:rgba(0,0,0,.28);text-transform:uppercase;}
+.msp-v{font-family:var(--serif);font-size:14px;color:var(--black);}
+
+/* CTA COLLECTION */
+.cta-collection{background:var(--black);padding:6rem 3rem;display:flex;justify-content:space-between;align-items:center;gap:3rem;}
+.ctac-left{}
+.ctac-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:.875rem;}
+.ctac-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4vw,48px);color:var(--white);letter-spacing:0.03em;}
+.ctac-title em{font-style:italic;font-weight:300;}
+.ctac-link{display:inline-flex;align-items:center;gap:.875rem;font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;text-decoration:none;cursor:none;border:1px solid rgba(255,255,255,.18);padding:14px 28px;transition:all .35s;position:relative;overflow:hidden;flex-shrink:0;}
+.ctac-link::before{content:'';position:absolute;inset:0;background:var(--white);transform:scaleX(0);transform-origin:left;transition:transform .38s;}
+.ctac-link:hover::before{transform:scaleX(1);}
+.ctac-link:hover{color:var(--black);}
+.ctac-link span,.ctac-arr{position:relative;z-index:1;}
+.ctac-arr{transition:transform .38s;}
+.ctac-link:hover .ctac-arr{transform:translateX(4px);}
+
+/* WAITLIST */
+.wl{background:var(--black);padding:6rem 3rem;text-align:center;border-top:1px solid var(--border);}
+.wl-head{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,64px);color:var(--white);letter-spacing:0.03em;margin-bottom:.75rem;}
+.wl-head em{font-style:italic;font-weight:300;}
+.wl-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:2.75rem;}
+.wl-form{display:flex;max-width:380px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(255,255,255,.15);}
+.wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--white);}
+.wl-in::placeholder{color:rgba(255,255,255,.2);}
+.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--white);text-transform:uppercase;cursor:none;padding:12px 0;transition:opacity .3s;}
+.wl-btn:hover{opacity:.4;}
+.wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(255,255,255,.15);text-transform:uppercase;}
+
+/* FOOTER */
+footer{background:var(--black);padding:5rem 3rem 2.5rem;border-top:1px solid var(--border);}
+.ft-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;padding-bottom:4rem;border-bottom:1px solid var(--border);}
+.ft-brand{font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;margin-bottom:.75rem;}
+.ft-tag{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.12em;color:rgba(255,255,255,.13);line-height:2.4;text-transform:uppercase;}
+.ft-col-h{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-l{display:block;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.13);text-transform:uppercase;margin-bottom:.875rem;text-decoration:none;cursor:none;transition:color .2s;}
+.ft-l:hover{color:rgba(255,255,255,.45);}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;}
+.ft-copy{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.1);text-transform:uppercase;}
+.ft-nfc{display:flex;align-items:center;gap:7px;}
+.ft-nfc-dot{width:4px;height:4px;background:var(--white);border-radius:50%;opacity:.15;}
+.ft-nfc-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.42em;color:rgba(255,255,255,.12);text-transform:uppercase;}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-r"></div>
+
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DIVUS</a>
+  <div class="nav-links">
+    <a class="nl" href="collection.html">Collection</a>
+    <a class="nl active" href="merch.html">Merch</a>
+    <a class="nl" href="atelier.html">L'atelier</a>
+    <a class="nl" href="certification.html">Certification</a>
+  </div>
+  <div class="nav-right"><a class="nr" href="#">Compte</a><a class="nr" href="#">Sac</a></div>
+</nav>
+
+<div class="page-header rv">
+  <div class="page-header-bg"></div>
+  <div class="page-header-content">
+    <div class="ph-eye">Pièces complémentaires</div>
+    <div class="ph-title">Le <em>Merch.</em></div>
+    <div class="ph-sub">Disponible en continu · Même univers · Même exigence</div>
+  </div>
+</div>
+
+<div class="intro rv">
+  <div>
+    <div class="intro-title">L'univers DIVUS,<br><em>accessible.</em></div>
+    <div class="rule"></div>
+  </div>
+  <div class="intro-body">Les pièces maîtresses sont sold out — c'est leur nature. Le merch DIVUS permet d'entrer dans l'univers de la maison à tout moment, sans compromis sur <em>la qualité ni l'esthétique.</em></div>
+</div>
+
+<section class="merch-sec">
+  <div class="merch-grid rv">
+    <div class="mc" onclick="om('Bonnet DIVUS','Merch','Laine mérinos · One size','150','https://images.unsplash.com/photo-1556306535-38febf6cdbe4?w=600&q=80&fit=crop','Laine mérinos · Broderie DIVUS · Noir ou crème')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1556306535-38febf6cdbe4?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Bonnet DIVUS</div><div class="mc-detail">Laine mérinos · One size</div><div class="mc-price">150 €</div></div>
+    </div>
+    <div class="mc" onclick="om('Casquette DIVUS','Merch','Coton twill · Ajustable','180','https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&q=80&fit=crop','Coton twill 6 panneaux · Broderie DIVUS · Noir')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Casquette DIVUS</div><div class="mc-detail">Coton twill · Ajustable</div><div class="mc-price">180 €</div></div>
+    </div>
+    <div class="mc" onclick="om('Hoodie DIVUS','Merch','Coton 380g · Unisexe','390','https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=600&q=80&fit=crop','Coton 380g · Broderie DIVUS · Oversize · Noir ou crème')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Hoodie DIVUS</div><div class="mc-detail">Coton 380g · Unisexe</div><div class="mc-price">390 €</div></div>
+    </div>
+    <div class="mc" onclick="om('Écharpe mérinos','Merch','Laine mérinos 100% · 200 × 30cm','280','https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&q=80&fit=crop','Mérinos extra-fin · Broderie DIVUS · Noir ou crème ivoire')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Écharpe mérinos</div><div class="mc-detail">Laine mérinos · 200 × 30cm</div><div class="mc-price">280 €</div></div>
+    </div>
+    <div class="mc" onclick="om('Set intime DIVUS','Merch','Coton pima · Pack 3 pièces','220','https://images.unsplash.com/photo-1603252109303-2751441dd157?w=600&q=80&fit=crop','Coton pima 200g · Boxer + T-shirt + Chaussettes · Noir')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1603252109303-2751441dd157?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Set intime DIVUS</div><div class="mc-detail">Coton pima · Pack 3 pièces</div><div class="mc-price">220 €</div></div>
+    </div>
+    <div class="mc" onclick="om('Chaussettes × 3','Merch','Coton mercerisé · Pack 3 paires','90','https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=600&q=80&fit=crop','Coton mercerisé · Broderie DIVUS · Noir ou blanc cassé')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Chaussettes × 3</div><div class="mc-detail">Coton mercerisé · Pack 3 paires</div><div class="mc-price">90 €</div></div>
+    </div>
+    <div class="mc" onclick="om('Tote canvas DIVUS','Merch','Canvas 480g · 40 × 35cm','120','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80&fit=crop','Canvas coton épais · Sérigraphie DIVUS · Noir')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Tote canvas DIVUS</div><div class="mc-detail">Canvas 480g · 40 × 35cm</div><div class="mc-price">120 €</div></div>
+    </div>
+    <div class="mc" onclick="om('Cartes postales','Merch','Papier 350g · Set de 10','45','https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80&fit=crop','Papier coton 350g · 10 visuels · Illustrations DIVUS')">
+      <div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400&q=80&fit=crop" alt=""><div class="mc-hover">Voir le détail</div></div>
+      <div class="mc-info"><div class="mc-name">Cartes postales</div><div class="mc-detail">Papier 350g · Set de 10</div><div class="mc-price">45 €</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-collection rv">
+  <div class="ctac-left">
+    <div class="ctac-eye">Pièces maîtresses</div>
+    <div class="ctac-title">Découvrir les t-shirts<br><em>collector.</em></div>
+  </div>
+  <a class="ctac-link" href="collection.html"><span>Voir la collection</span><span class="ctac-arr">→</span></a>
+</div>
+
+<div class="wl rv">
+  <div class="wl-head">Le prochain <em>drop.</em></div>
+  <div class="wl-sub">Liste prioritaire · Accès 24h avant · Aucune publicité</div>
+  <div class="wl-form"><input class="wl-in" type="email" placeholder="votre@email.com"><button class="wl-btn">→</button></div>
+  <div class="wl-note">Uniquement les drops à venir</div>
+</div>
+
+<footer>
+  <div class="ft-top">
+    <div><div class="ft-brand">DIVUS</div><div class="ft-tag">Maison de collection · Paris · Amsterdam</div><div class="ft-desc">Éditions limitées certifiées NFC.<br>Jamais un restock. Jamais.<br>Fabricatum in Gallia · MMXXV</div></div>
+    <div><div class="ft-col-h">Boutique</div><a class="ft-l" href="collection.html">T-shirts collector</a><a class="ft-l" href="merch.html">Merch</a><a class="ft-l" href="collection.html">Tous les drops</a><a class="ft-l" href="certification.html">Certification NFC</a></div>
+    <div><div class="ft-col-h">Maison</div><a class="ft-l" href="#">La vision</a><a class="ft-l" href="atelier.html">L'atelier</a><a class="ft-l" href="#">Partenaires</a><a class="ft-l" href="#">Presse</a></div>
+    <div><div class="ft-col-h">Service</div><a class="ft-l" href="#">Livraison</a><a class="ft-l" href="certification.html">Authentification</a><a class="ft-l" href="#">Contact</a><a class="ft-l" href="#">FAQ</a></div>
+  </div>
+  <div class="ft-bot"><div class="ft-copy">© MMXXV DIVUS · Tous droits réservés</div><div class="ft-nfc"><div class="ft-nfc-dot"></div><div class="ft-nfc-txt">NFC · NTAG424 · Certified</div></div></div>
+</footer>
+
+<div class="mo" id="modal" onclick="mc(event)">
+  <div class="mo-panel">
+    <div class="mo-img"><img id="mi" src="" alt=""></div>
+    <div class="mo-body">
+      <button class="mo-close" onclick="cm()">✕ Fermer</button>
+      <div class="mo-eye" id="me"></div>
+      <div class="mo-name" id="mn"></div>
+      <div class="mo-price" id="mp"></div>
+      <div class="mo-szl" id="szl">Taille</div>
+      <div class="mo-sizes" id="szs">
+        <button class="sz" onclick="ss(this)">XS</button><button class="sz" onclick="ss(this)">S</button><button class="sz a" onclick="ss(this)">M</button><button class="sz" onclick="ss(this)">L</button><button class="sz" onclick="ss(this)">XL</button>
+      </div>
+      <button class="mo-add">Ajouter au sac</button>
+      <button class="mo-wish">Ajouter à la liste de souhaits</button>
+      <div class="mo-specs">
+        <div class="msp"><span class="msp-k">Détails</span><span class="msp-v" id="mdet"></span></div>
+        <div class="msp"><span class="msp-k">Atelier</span><span class="msp-v">Paris · DIVUS</span></div>
+        <div class="msp"><span class="msp-k">Livraison</span><span class="msp-v">DHL Express · 48h</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const cur=document.getElementById('cur'),cr=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(a);})();
+const rvs=document.querySelectorAll('.rv');
+function reveal(){rvs.forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*.9)el.classList.add('on');});}
+reveal();window.addEventListener('scroll',reveal);
+function om(name,eye,detail,price,img,specs){
+  document.getElementById('mi').src=img;
+  document.getElementById('mn').textContent=name;
+  document.getElementById('me').textContent=eye;
+  document.getElementById('mp').textContent=price+' €';
+  document.getElementById('mdet').textContent=specs;
+  const m=document.getElementById('modal');
+  m.style.display='flex';setTimeout(()=>m.classList.add('vis'),10);
+  document.body.style.overflow='hidden';
+}
+function cm(){const m=document.getElementById('modal');m.classList.remove('vis');setTimeout(()=>{m.style.display='none';document.body.style.overflow='';},420);}
+function mc(e){if(e.target===document.getElementById('modal'))cm();}
+function ss(b){document.querySelectorAll('.sz').forEach(x=>x.classList.remove('a'));b.classList.add('a');}
+</script>
+</body>
+</html>

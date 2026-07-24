@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVUS — Certification NFC</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--black:#0A0A0A;--white:#FAFAF8;--border:rgba(255,255,255,0.07);--border-light:rgba(0,0,0,0.08);--serif:'Cormorant Garamond',serif;--sans:'Inter',sans-serif;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:none;}
+#cur{width:7px;height:7px;background:var(--white);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cur-r{width:34px;height:34px;border:1px solid rgba(255,255,255,0.22);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+.nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;background:rgba(10,10,10,0.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;text-decoration:none;cursor:none;transition:opacity .3s;}
+.nav-logo:hover{opacity:.5;}
+.nav-links{display:flex;gap:2.5rem;}
+.nl{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.35);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;position:relative;}
+.nl::after{content:'';position:absolute;bottom:-2px;left:0;right:100%;height:1px;background:var(--white);transition:right .35s;}
+.nl:hover{color:var(--white);}
+.nl:hover::after,.nl.active::after{right:0;}
+.nl.active{color:var(--white);}
+.nav-right{display:flex;gap:1.75rem;}
+.nr{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.3);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;}
+.nr:hover{color:var(--white);}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .85s,transform .85s;}
+.rv.on{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.35s;}.d4{transition-delay:.5s;}
+
+/* HERO */
+.hero{height:100vh;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,255,255,.03) 0%,transparent 70%);}
+.hero-rings{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.ring{border:1px solid rgba(255,255,255,.04);border-radius:50%;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);}
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 3rem;}
+.hero-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.6em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:1.5rem;opacity:0;transition:opacity .9s .3s;}
+.hero-eye.on{opacity:1;}
+.hero-title{font-family:var(--serif);font-weight:400;font-size:clamp(52px,9vw,120px);color:var(--white);letter-spacing:0.04em;line-height:1.02;opacity:0;transform:translateY(18px);transition:opacity .9s .5s,transform .9s .5s;}
+.hero-title.on{opacity:1;transform:translateY(0);}
+.hero-title em{font-style:italic;font-weight:300;}
+.hero-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-top:1.75rem;opacity:0;transition:opacity .9s .8s;}
+.hero-sub.on{opacity:1;}
+.hero-dot{width:8px;height:8px;background:var(--white);border-radius:50%;margin:2.5rem auto 0;opacity:0;animation:none;transition:opacity .9s 1.1s;}
+.hero-dot.on{opacity:.25;animation:pulse 2.5s 1.1s infinite;}
+@keyframes pulse{0%,100%{opacity:.25;transform:scale(1);}50%{opacity:.06;transform:scale(.6);}}
+
+/* CONCEPT CERT */
+.concept{padding:8rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center;}
+.concept-left{}
+.c-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:1rem;}
+.c-title{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.5vw,56px);color:var(--white);letter-spacing:0.03em;line-height:1.07;}
+.c-title em{font-style:italic;font-weight:300;}
+.rule{height:1px;background:var(--border);margin:2.5rem 0;}
+.c-body{font-family:var(--serif);font-weight:300;font-size:19px;color:rgba(255,255,255,.38);line-height:2;}
+.c-body em{font-style:italic;color:rgba(255,255,255,.6);}
+.concept-right{}
+
+/* CERT CARD 3D */
+.cert-3d{perspective:1400px;}
+.cert-card{background:#0F0F0F;border:1px solid rgba(255,255,255,.06);padding:3.5rem;position:relative;transform:rotateY(-12deg) rotateX(6deg);transition:transform .75s cubic-bezier(.25,.46,.45,.94);}
+.cert-3d:hover .cert-card{transform:rotateY(0) rotateX(0);}
+.cert-card::after{content:'';position:absolute;top:10px;left:10px;right:-10px;bottom:-10px;border:1px solid rgba(255,255,255,.025);pointer-events:none;}
+.cert-num{font-family:var(--serif);font-style:italic;font-size:80px;color:rgba(255,255,255,.1);line-height:1;margin-bottom:6px;}
+.cert-label{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.55em;color:rgba(255,255,255,.15);text-transform:uppercase;margin-bottom:3rem;}
+.cert-meta{display:flex;gap:2.5rem;margin-bottom:2.5rem;}
+.cm-k{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.15);text-transform:uppercase;margin-bottom:5px;}
+.cm-v{font-family:var(--serif);font-size:16px;color:rgba(255,255,255,.5);}
+.cert-pill{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(255,255,255,.08);padding:7px 15px;}
+.cert-dot{width:6px;height:6px;background:var(--white);border-radius:50%;opacity:.3;animation:pulse 2.5s infinite;}
+.cert-pill-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.42em;color:rgba(255,255,255,.25);text-transform:uppercase;}
+.cert-scan-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.15),transparent);animation:scan 3s ease-in-out infinite;top:0;}
+@keyframes scan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+
+/* STEPS */
+.steps-sec{background:var(--white);color:var(--black);padding:8rem 3rem;}
+.steps-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(0,0,0,.3);text-transform:uppercase;margin-bottom:1rem;}
+.steps-title{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.5vw,56px);color:var(--black);letter-spacing:0.03em;line-height:1.07;margin-bottom:5rem;}
+.steps-title em{font-style:italic;font-weight:300;}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-light);}
+.step{background:var(--white);padding:3rem 2.5rem;transition:background .35s;cursor:none;}
+.step:hover{background:#f5f5f3;}
+.step-icon{width:48px;height:48px;border:1px solid var(--border-light);display:flex;align-items:center;justify-content:center;margin-bottom:2rem;}
+.step-icon-svg{width:20px;height:20px;opacity:.4;}
+.step-num{font-family:var(--serif);font-style:italic;font-size:72px;color:rgba(0,0,0,.05);line-height:1;margin-bottom:1rem;}
+.step-title{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--black);margin-bottom:.875rem;}
+.step-body{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.15em;color:rgba(0,0,0,.4);text-transform:uppercase;line-height:2;}
+
+/* TECH SPECS */
+.tech-sec{background:var(--black);padding:8rem 3rem;}
+.tech-intro{display:grid;grid-template-columns:1fr 1fr;gap:8rem;margin-bottom:5rem;align-items:end;}
+.tech-title{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.5vw,56px);color:var(--white);letter-spacing:0.03em;line-height:1.07;}
+.tech-title em{font-style:italic;font-weight:300;}
+.tech-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.28em;color:rgba(255,255,255,.22);text-transform:uppercase;line-height:2.4;}
+.tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);}
+.tech-cell{background:rgba(255,255,255,.02);padding:2.5rem;transition:background .3s;}
+.tech-cell:hover{background:rgba(255,255,255,.035);}
+.tech-k{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.5em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:.875rem;}
+.tech-v{font-family:var(--serif);font-weight:400;font-size:22px;color:rgba(255,255,255,.65);margin-bottom:.5rem;}
+.tech-v em{font-style:italic;font-weight:300;}
+.tech-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.18em;color:rgba(255,255,255,.2);text-transform:uppercase;line-height:2;}
+
+/* VERIFY SECTION */
+.verify-sec{background:var(--white);color:var(--black);padding:8rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center;}
+.verify-copy{}
+.verify-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(0,0,0,.3);text-transform:uppercase;margin-bottom:1rem;}
+.verify-title{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.5vw,56px);color:var(--black);letter-spacing:0.03em;line-height:1.07;}
+.verify-title em{font-style:italic;font-weight:300;}
+.rule-dark{height:1px;background:var(--border-light);margin:2.5rem 0;}
+.verify-body{font-family:var(--serif);font-weight:300;font-size:18px;color:rgba(0,0,0,.45);line-height:2;margin-bottom:2.5rem;}
+.verify-body em{font-style:italic;color:rgba(0,0,0,.65);}
+.verify-steps{display:flex;flex-direction:column;}
+.vs{display:flex;gap:1.5rem;padding:1.25rem 0;border-bottom:1px solid var(--border-light);align-items:flex-start;}
+.vs:first-child{border-top:1px solid var(--border-light);}
+.vs-n{font-family:var(--serif);font-style:italic;font-size:22px;color:rgba(0,0,0,.15);flex-shrink:0;min-width:26px;line-height:1.3;}
+.vs-title{font-family:var(--serif);font-size:17px;color:var(--black);margin-bottom:3px;}
+.vs-sub{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.18em;color:rgba(0,0,0,.35);text-transform:uppercase;line-height:2;}
+.verify-visual{display:flex;align-items:center;justify-content:center;}
+.phone-mockup{width:220px;background:#111;border-radius:32px;padding:20px;border:1px solid rgba(255,255,255,.06);position:relative;}
+.phone-screen{background:#0A0A0A;border-radius:20px;padding:2rem 1.5rem;border:1px solid rgba(255,255,255,.04);}
+.ps-status{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;}
+.ps-dot{width:6px;height:6px;background:var(--white);border-radius:50%;opacity:.3;animation:pulse 2.5s infinite;}
+.ps-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.25);text-transform:uppercase;}
+.ps-num{font-family:var(--serif);font-style:italic;font-size:42px;color:rgba(255,255,255,.6);line-height:1;margin-bottom:4px;}
+.ps-label{font-family:var(--sans);font-weight:200;font-size:7px;letter-spacing:0.45em;color:rgba(255,255,255,.15);text-transform:uppercase;margin-bottom:1.5rem;}
+.ps-row{display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ps-row:last-child{border-bottom:none;}
+.ps-k{font-family:var(--sans);font-weight:300;font-size:7px;letter-spacing:0.3em;color:rgba(255,255,255,.15);text-transform:uppercase;}
+.ps-v{font-family:var(--serif);font-size:11px;color:rgba(255,255,255,.4);}
+.ps-certified{margin-top:1.5rem;text-align:center;border:1px solid rgba(255,255,255,.08);padding:8px;display:flex;align-items:center;justify-content:center;gap:7px;}
+.ps-cert-dot{width:5px;height:5px;background:var(--white);border-radius:50%;opacity:.3;}
+.ps-cert-txt{font-family:var(--sans);font-weight:300;font-size:7px;letter-spacing:0.4em;color:rgba(255,255,255,.2);text-transform:uppercase;}
+
+/* FAQ */
+.faq-sec{background:var(--black);padding:8rem 3rem;}
+.faq-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:1rem;}
+.faq-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.5vw,44px);color:var(--white);letter-spacing:0.03em;margin-bottom:3rem;}
+.faq-title em{font-style:italic;font-weight:300;}
+.faq-list{display:flex;flex-direction:column;}
+.faq-item{border-bottom:1px solid var(--border);}
+.faq-item:first-child{border-top:1px solid var(--border);}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0;cursor:none;}
+.faq-q-txt{font-family:var(--serif);font-weight:400;font-size:19px;color:var(--white);letter-spacing:0.02em;}
+.faq-icon{font-family:var(--serif);font-size:24px;color:rgba(255,255,255,.2);transition:transform .3s;flex-shrink:0;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+.faq-a{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,.3);text-transform:uppercase;line-height:2;max-height:0;overflow:hidden;transition:max-height .4s,padding .4s;}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:1.5rem;}
+
+/* CTA COLLECTION */
+.cta-bottom{background:var(--white);padding:6rem 3rem;display:flex;justify-content:space-between;align-items:center;gap:3rem;}
+.ctab-left{}
+.ctab-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(0,0,0,.3);text-transform:uppercase;margin-bottom:.875rem;}
+.ctab-title{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.5vw,42px);color:var(--black);letter-spacing:0.03em;}
+.ctab-title em{font-style:italic;font-weight:300;}
+.ctab-link{display:inline-flex;align-items:center;gap:.875rem;font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;text-decoration:none;cursor:none;background:var(--black);padding:14px 28px;transition:opacity .35s;flex-shrink:0;}
+.ctab-link:hover{opacity:.75;}
+.ctab-arr{transition:transform .38s;}
+.ctab-link:hover .ctab-arr{transform:translateX(4px);}
+
+/* WAITLIST */
+.wl{background:var(--black);padding:6rem 3rem;text-align:center;border-top:1px solid var(--border);}
+.wl-head{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,64px);color:var(--white);letter-spacing:0.03em;margin-bottom:.75rem;}
+.wl-head em{font-style:italic;font-weight:300;}
+.wl-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:2.75rem;}
+.wl-form{display:flex;max-width:380px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(255,255,255,.15);}
+.wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--white);}
+.wl-in::placeholder{color:rgba(255,255,255,.2);}
+.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--white);text-transform:uppercase;cursor:none;padding:12px 0;transition:opacity .3s;}
+.wl-btn:hover{opacity:.4;}
+.wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(255,255,255,.15);text-transform:uppercase;}
+footer{background:var(--black);padding:5rem 3rem 2.5rem;border-top:1px solid var(--border);}
+.ft-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;padding-bottom:4rem;border-bottom:1px solid var(--border);}
+.ft-brand{font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;margin-bottom:.75rem;}
+.ft-tag{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.12em;color:rgba(255,255,255,.13);line-height:2.4;text-transform:uppercase;}
+.ft-col-h{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-l{display:block;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.13);text-transform:uppercase;margin-bottom:.875rem;text-decoration:none;cursor:none;transition:color .2s;}
+.ft-l:hover{color:rgba(255,255,255,.45);}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;}
+.ft-copy{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.1);text-transform:uppercase;}
+.ft-nfc{display:flex;align-items:center;gap:7px;}
+.ft-nfc-dot{width:4px;height:4px;background:var(--white);border-radius:50%;opacity:.15;}
+.ft-nfc-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.42em;color:rgba(255,255,255,.12);text-transform:uppercase;}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-r"></div>
+
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DIVUS</a>
+  <div class="nav-links">
+    <a class="nl" href="collection.html">Collection</a>
+    <a class="nl" href="merch.html">Merch</a>
+    <a class="nl" href="atelier.html">L'atelier</a>
+    <a class="nl active" href="certification.html">Certification</a>
+  </div>
+  <div class="nav-right"><a class="nr" href="#">Compte</a><a class="nr" href="#">Sac</a></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-rings">
+    <div class="ring" style="width:200px;height:200px;"></div>
+    <div class="ring" style="width:360px;height:360px;"></div>
+    <div class="ring" style="width:520px;height:520px;"></div>
+    <div class="ring" style="width:700px;height:700px;"></div>
+    <div class="ring" style="width:900px;height:900px;"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eye" id="he">Certification · NFC NTAG424</div>
+    <div class="hero-title" id="ht">Approchez.<br><em>Vérifiez.</em></div>
+    <div class="hero-sub" id="hs">Cryptographie asymétrique · Non clonable · Compatible tous smartphones</div>
+    <div class="hero-dot" id="hd"></div>
+  </div>
+</section>
+
+<!-- CONCEPT + CERT CARD -->
+<section class="concept rv">
+  <div class="concept-left">
+    <div class="c-eye">Le concept</div>
+    <div class="c-title">L'authenticité prouvée,<br><em>pas promise.</em></div>
+    <div class="rule"></div>
+    <p class="c-body">Chaque pièce DIVUS contient une puce NFC NTAG424 invisible, intégrée dans l'étiquette intérieure. Elle contient une <em>signature cryptographique asymétrique unique</em> — impossible à dupliquer, impossible à cloner. Un scan de téléphone suffit.</p>
+  </div>
+  <div class="concept-right">
+    <div class="cert-3d">
+      <div class="cert-card">
+        <div class="cert-scan-line"></div>
+        <div class="cert-num">№ 347</div>
+        <div class="cert-label">sur 963 exemplaires · Series III · SVJ · MMXXV</div>
+        <div class="cert-meta">
+          <div><div class="cm-k">Édition</div><div class="cm-v">SVJ · 2025</div></div>
+          <div><div class="cm-k">Atelier</div><div class="cm-v">Paris</div></div>
+          <div><div class="cm-k">Restock</div><div class="cm-v">Impossible</div></div>
+        </div>
+        <div class="cert-pill"><div class="cert-dot"></div><div class="cert-pill-txt">NFC · NTAG424 · Certified · Never reproduced</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="steps-sec">
+  <div class="steps-eye rv">Comment ça fonctionne</div>
+  <div class="steps-title rv d1">Trois secondes.<br><em>Une certitude.</em></div>
+  <div class="steps-grid rv d2">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Approchez</div>
+      <div class="step-body">Approchez votre smartphone de l'étiquette intérieure cousue au col · Aucune application à télécharger · Compatible iPhone et Android · Distance 3 à 5 cm</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Vérification</div>
+      <div class="step-body">La puce NTAG424 génère une signature cryptographique dynamique · Vérifiée en temps réel sur nos serveurs · Résultat en moins de 2 secondes · Impossible à falsifier</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Certification</div>
+      <div class="step-body">Votre certificat s'affiche · Numéro de série · Série · Atelier · Date de fabrication · Propriétaire enregistré · Historique de la pièce</div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH SPECS -->
+<section class="tech-sec">
+  <div class="tech-intro rv">
+    <div>
+      <div style="font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:1rem;">Spécifications techniques</div>
+      <div class="tech-title">NTAG424 DNA.<br><em>Le seul standard.</em></div>
+    </div>
+    <div class="tech-sub rv d2">La puce NTAG424 de NXP Semiconductors est le seul standard NFC intégrant une cryptographie asymétrique AES-128 bits. Chaque scan génère une réponse unique et non reproductible. C'est la technologie utilisée par les passeports biométriques.</div>
+  </div>
+  <div class="tech-grid rv d3">
+    <div class="tech-cell">
+      <div class="tech-k">Standard</div>
+      <div class="tech-v">NTAG424 <em>DNA</em></div>
+      <div class="tech-note">NXP Semiconductors · ISO/IEC 14443A · NFC Forum Type 4</div>
+    </div>
+    <div class="tech-cell">
+      <div class="tech-k">Cryptographie</div>
+      <div class="tech-v">AES-<em>128 bits</em></div>
+      <div class="tech-note">Asymétrique · Clé unique par puce · Impossible à dériver · Standard passeport biométrique</div>
+    </div>
+    <div class="tech-cell">
+      <div class="tech-k">Résistance</div>
+      <div class="tech-v">IP<em>67</em></div>
+      <div class="tech-note">Lavage machine 40° · Encapsulation silicone · Résistance mécaniqe · Durée de vie 10 ans+</div>
+    </div>
+    <div class="tech-cell">
+      <div class="tech-k">Compatibilité</div>
+      <div class="tech-v">iOS <em>+</em> Android</div>
+      <div class="tech-note">Tous smartphones NFC · iPhone 7+ · Android 5+ · Aucune application requise · Natif</div>
+    </div>
+    <div class="tech-cell">
+      <div class="tech-k">Intégration</div>
+      <div class="tech-v">Étiquette <em>intérieure</em></div>
+      <div class="tech-note">Invisible à l'œil nu · Cousue dans le col · Aucune modification de l'aspect du vêtement</div>
+    </div>
+    <div class="tech-cell">
+      <div class="tech-k">Unicité</div>
+      <div class="tech-v">1 puce <em>= 1 pièce</em></div>
+      <div class="tech-note">Identifiant unique gravé en usine · Non transférable · Signature liée au numéro de série DIVUS</div>
+    </div>
+  </div>
+</section>
+
+<!-- VERIFY SECTION -->
+<section class="verify-sec">
+  <div class="verify-copy rv">
+    <div class="verify-eye">Ce que vous voyez</div>
+    <div class="verify-title">Le certificat<br><em>sur votre écran.</em></div>
+    <div class="rule-dark"></div>
+    <p class="verify-body">En 3 secondes, votre téléphone affiche le <em>certificat complet</em> de la pièce — son histoire, son numéro, son atelier, la date de fabrication.</p>
+    <div class="verify-steps">
+      <div class="vs"><div class="vs-n">I.</div><div><div class="vs-title">Numéro de série</div><div class="vs-sub">№ 347 / 963 · Unique et non transférable</div></div></div>
+      <div class="vs"><div class="vs-n">II.</div><div><div class="vs-title">Série et collab</div><div class="vs-sub">Drop III · SVJ · Lamborghini × DIVUS · MMXXV</div></div></div>
+      <div class="vs"><div class="vs-n">III.</div><div><div class="vs-title">Atelier et date</div><div class="vs-sub">Paris · Haute couture · Date de fabrication exacte</div></div></div>
+      <div class="vs"><div class="vs-n">IV.</div><div><div class="vs-title">Statut</div><div class="vs-sub">Certifié authentique · Never reproduced · Fabricatum in Gallia</div></div></div>
+    </div>
+  </div>
+  <div class="verify-visual rv d2">
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div class="ps-status"><div class="ps-dot"></div><div class="ps-txt">Certifié authentique</div></div>
+        <div class="ps-num">№ 347</div>
+        <div class="ps-label">sur 963 exemplaires</div>
+        <div class="ps-row"><span class="ps-k">Série</span><span class="ps-v">Drop III · SVJ</span></div>
+        <div class="ps-row"><span class="ps-k">Atelier</span><span class="ps-v">Paris</span></div>
+        <div class="ps-row"><span class="ps-k">Date</span><span class="ps-v">MMXXV</span></div>
+        <div class="ps-row"><span class="ps-k">Restock</span><span class="ps-v">Impossible</span></div>
+        <div class="ps-certified"><div class="ps-cert-dot"></div><div class="ps-cert-txt">NFC · NTAG424 · Certified</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec">
+  <div class="faq-eye rv">Questions fréquentes</div>
+  <div class="faq-title rv d1">Tout ce que vous<br><em>voulez savoir.</em></div>
+  <div class="faq-list rv d2">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">La puce NFC résiste-t-elle au lavage ?</span><span class="faq-icon">+</span></div>
+      <div class="faq-a">Oui. La puce NTAG424 est encapsulée dans du silicone avec une certification IP67. Elle résiste au lavage machine à 40° et à la pression mécanique d'un cycle normal. Nous l'avons testée sur 200 cycles sans dégradation.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">Peut-on cloner ou falsifier la puce ?</span><span class="faq-icon">+</span></div>
+      <div class="faq-a">Non. La NTAG424 utilise une cryptographie AES-128 asymétrique. Chaque scan génère une réponse cryptographique unique et dynamique, vérifiée par nos serveurs. Même en copiant physiquement la puce, le clone ne passerait pas la vérification.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">Faut-il une application pour scanner ?</span><span class="faq-icon">+</span></div>
+      <div class="faq-a">Non. La lecture NFC est native sur tous les iPhones depuis le modèle 7 et sur tous les Android depuis 2015. Il suffit d'approcher votre téléphone — une notification apparaît automatiquement.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">La puce peut-elle être transférée à un autre vêtement ?</span><span class="faq-icon">+</span></div>
+      <div class="faq-a">Non. La puce est cousue dans l'étiquette intérieure et liée de façon permanente au numéro de série de la pièce. Si l'étiquette est retirée ou endommagée, la pièce perd son certificat d'authenticité et sa valeur de revente.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-txt">Que se passe-t-il si je revends ma pièce ?</span><span class="faq-icon">+</span></div>
+      <div class="faq-a">L'acheteur peut scanner la pièce et vérifier son authenticité instantanément. Vous pouvez également transférer l'enregistrement du propriétaire sur notre plateforme, ce qui renforce la traçabilité et la valeur de la pièce sur le marché secondaire.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-bottom rv">
+  <div class="ctab-left">
+    <div class="ctab-eye">Pièces maîtresses</div>
+    <div class="ctab-title">Découvrir les t-shirts<br><em>certifiés.</em></div>
+  </div>
+  <a class="ctab-link" href="collection.html"><span>Voir la collection</span><span class="ctab-arr"> →</span></a>
+</div>
+
+<div class="wl rv">
+  <div class="wl-head">Le prochain <em>drop.</em></div>
+  <div class="wl-sub">Liste prioritaire · Accès 24h avant · Aucune publicité</div>
+  <div class="wl-form"><input class="wl-in" type="email" placeholder="votre@email.com"><button class="wl-btn">→</button></div>
+  <div class="wl-note">Uniquement les drops à venir</div>
+</div>
+
+<footer>
+  <div class="ft-top">
+    <div><div class="ft-brand">DIVUS</div><div class="ft-tag">Maison de collection · Paris · Amsterdam</div><div class="ft-desc">Éditions limitées certifiées NFC.<br>Jamais un restock. Jamais.<br>Fabricatum in Gallia · MMXXV</div></div>
+    <div><div class="ft-col-h">Boutique</div><a class="ft-l" href="collection.html">T-shirts collector</a><a class="ft-l" href="merch.html">Merch</a><a class="ft-l" href="collection.html">Tous les drops</a><a class="ft-l" href="certification.html">Certification NFC</a></div>
+    <div><div class="ft-col-h">Maison</div><a class="ft-l" href="#">La vision</a><a class="ft-l" href="atelier.html">L'atelier</a><a class="ft-l" href="#">Partenaires</a><a class="ft-l" href="#">Presse</a></div>
+    <div><div class="ft-col-h">Service</div><a class="ft-l" href="#">Livraison</a><a class="ft-l" href="certification.html">Authentification</a><a class="ft-l" href="#">Contact</a><a class="ft-l" href="#">FAQ</a></div>
+  </div>
+  <div class="ft-bot"><div class="ft-copy">© MMXXV DIVUS · Tous droits réservés</div><div class="ft-nfc"><div class="ft-nfc-dot"></div><div class="ft-nfc-txt">NFC · NTAG424 · Certified</div></div></div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),cr=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(a);})();
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('he').classList.add('on'),200);
+  setTimeout(()=>document.getElementById('ht').classList.add('on'),400);
+  setTimeout(()=>document.getElementById('hs').classList.add('on'),700);
+  setTimeout(()=>document.getElementById('hd').classList.add('on'),1000);
+  reveal();
+});
+const rvs=document.querySelectorAll('.rv');
+function reveal(){rvs.forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*.9)el.classList.add('on');});}
+window.addEventListener('scroll',reveal);
+function toggleFaq(el){
+  const item=el.parentElement;
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+</script>
+</body>
+</html>

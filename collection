@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVUS — Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#0A0A0A;
+  --white:#FAFAF8;
+  --gray:#666;
+  --border:rgba(255,255,255,0.07);
+  --border-light:rgba(0,0,0,0.08);
+  --serif:'Cormorant Garamond',serif;
+  --sans:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--white);color:var(--black);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:none;}
+
+/* CURSOR */
+#cur{width:7px;height:7px;background:var(--black);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+#cur-r{width:34px;height:34px;border:1px solid rgba(0,0,0,0.2);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+.dark-sec #cur{background:var(--white);}
+.dark-sec #cur-r{border-color:rgba(255,255,255,0.2);}
+
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:58px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 3rem;
+  background:rgba(250,250,248,0.96);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border-light);
+}
+.nav-logo{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:0.38em;color:var(--black);text-transform:uppercase;text-decoration:none;cursor:none;transition:opacity .3s;}
+.nav-logo:hover{opacity:.5;}
+.nav-links{display:flex;gap:2.5rem;}
+.nl{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(0,0,0,0.4);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;position:relative;}
+.nl::after{content:'';position:absolute;bottom:-2px;left:0;right:100%;height:1px;background:var(--black);transition:right .35s;}
+.nl:hover{color:var(--black);}
+.nl:hover::after,.nl.active::after{right:0;}
+.nl.active{color:var(--black);}
+.nav-right{display:flex;gap:1.75rem;}
+.nr{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(0,0,0,0.35);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;}
+.nr:hover{color:var(--black);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s;}
+.rv.on{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.35s;}
+
+/* PAGE HEADER */
+.page-header{
+  padding:10rem 3rem 5rem;
+  background:var(--black);
+  position:relative;overflow:hidden;
+}
+.page-header-bg{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1600&q=85&fit=crop') center/cover;
+  filter:brightness(.12) contrast(1.1);
+}
+.page-header-content{position:relative;z-index:2;}
+.ph-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.55em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:1rem;}
+.ph-title{font-family:var(--serif);font-weight:400;font-size:clamp(52px,8vw,110px);color:var(--white);letter-spacing:0.04em;line-height:1.02;}
+.ph-title em{font-style:italic;font-weight:300;}
+.ph-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.38em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-top:1.5rem;}
+
+/* FILTER BAR */
+.filter-bar{
+  background:var(--white);
+  border-bottom:1px solid var(--border-light);
+  padding:0 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:58px;z-index:100;
+}
+.filters{display:flex;gap:0;}
+.ftab{
+  font-family:var(--sans);font-weight:300;font-size:9px;
+  letter-spacing:0.38em;color:rgba(0,0,0,.35);text-transform:uppercase;
+  padding:.875rem 1.5rem;cursor:none;
+  border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .2s;
+  background:none;border-top:none;border-left:none;border-right:none;
+}
+.ftab.active{color:var(--black);border-bottom-color:var(--black);}
+.ftab:hover:not(.active){color:var(--black);}
+.filter-right{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.38em;color:rgba(0,0,0,.25);text-transform:uppercase;}
+
+/* DROPS INTRO */
+.drops-intro{padding:4rem 3rem 2rem;}
+.di-row{display:flex;justify-content:space-between;align-items:flex-end;}
+.di-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.5vw,44px);color:var(--black);letter-spacing:0.03em;}
+.di-title em{font-style:italic;}
+.di-count{font-family:var(--serif);font-style:italic;font-size:16px;color:rgba(0,0,0,.3);}
+
+/* MAIN PRODUCT GRID */
+.pgrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border-light);
+  padding:0 3rem;
+  padding-bottom:1px;
+}
+.pgrid-2col{grid-template-columns:repeat(2,1fr);}
+
+/* PRODUCT CARD */
+.pc{background:var(--white);cursor:none;position:relative;overflow:hidden;}
+.pc-iw{aspect-ratio:3/4;overflow:hidden;position:relative;}
+.pc-img{width:100%;height:100%;object-fit:cover;filter:brightness(.88);transition:transform .95s cubic-bezier(.25,.46,.45,.94),filter .55s;}
+.pc:hover .pc-img{transform:scale(1.06);filter:brightness(.96);}
+.pc-badge{position:absolute;font-family:var(--sans);font-weight:400;font-size:8px;letter-spacing:0.35em;text-transform:uppercase;padding:4px 10px;}
+.pc-badge.new-drop{background:var(--black);color:var(--white);top:1rem;left:1rem;}
+.pc-badge.series{background:var(--white);color:var(--black);border:1px solid rgba(0,0,0,.12);top:1rem;left:1rem;}
+.pc-badge.sold{
+  top:auto;bottom:1rem;left:1rem;
+  background:transparent;border:1px solid rgba(0,0,0,.15);color:rgba(0,0,0,.4);
+}
+.pc-hover{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--black);color:var(--white);
+  font-family:var(--sans);font-weight:300;font-size:9px;
+  letter-spacing:0.38em;text-transform:uppercase;
+  padding:15px;text-align:center;
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.25,.46,.45,.94);
+}
+.pc:hover .pc-hover{transform:translateY(0);}
+.pc-info{padding:1.5rem 1.5rem 2rem;background:var(--white);}
+.pc-name{font-family:var(--serif);font-weight:400;font-size:21px;color:var(--black);margin-bottom:4px;letter-spacing:0.02em;}
+.pc-collab{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(0,0,0,.3);text-transform:uppercase;margin-bottom:.875rem;}
+.pc-row{display:flex;justify-content:space-between;align-items:baseline;}
+.pc-price{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--black);}
+.pc-stk{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;}
+.pc-stk.live{color:var(--black);}
+.pc-stk.out{color:rgba(0,0,0,.28);}
+
+/* FEATURED DROP — grand format */
+.featured{
+  margin:1px 3rem;
+  display:grid;grid-template-columns:1fr 1fr;
+  background:var(--border-light);gap:1px;
+}
+.feat-img{position:relative;overflow:hidden;aspect-ratio:unset;min-height:520px;}
+.feat-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.05);transition:transform 1.1s ease;}
+.featured:hover .feat-img img{transform:scale(1.03);}
+.feat-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.7) 0%,transparent 55%);}
+.feat-badge{
+  position:absolute;top:1.5rem;left:1.5rem;
+  font-family:var(--sans);font-weight:400;font-size:8px;
+  letter-spacing:0.38em;text-transform:uppercase;
+  padding:5px 12px;background:var(--white);color:var(--black);
+}
+.feat-copy{background:var(--black);padding:4rem;display:flex;flex-direction:column;justify-content:center;}
+.feat-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:1rem;}
+.feat-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4vw,52px);color:var(--white);letter-spacing:0.03em;line-height:1.08;margin-bottom:.75rem;}
+.feat-title em{font-style:italic;font-weight:300;}
+.feat-meta{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.38em;color:rgba(255,255,255,.22);text-transform:uppercase;line-height:2.2;margin-bottom:2.5rem;}
+.feat-price{font-family:var(--serif);font-style:italic;font-size:38px;color:var(--white);margin-bottom:.5rem;}
+.feat-stock{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.38em;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2.5rem;}
+.feat-spec{display:flex;flex-direction:column;gap:0;margin-bottom:2.5rem;}
+.fs{display:flex;justify-content:space-between;padding:.875rem 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.fs:first-child{border-top:1px solid rgba(255,255,255,.06);}
+.fs-k{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.18);text-transform:uppercase;}
+.fs-v{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,.5);}
+.feat-cta{
+  display:inline-flex;align-items:center;gap:.875rem;
+  font-family:var(--sans);font-weight:300;font-size:10px;
+  letter-spacing:0.38em;text-transform:uppercase;
+  color:var(--white);text-decoration:none;cursor:none;
+  border:1px solid rgba(255,255,255,.18);padding:14px 26px;
+  transition:all .35s;position:relative;overflow:hidden;
+}
+.feat-cta::before{content:'';position:absolute;inset:0;background:var(--white);transform:scaleX(0);transform-origin:left;transition:transform .38s;}
+.feat-cta:hover::before{transform:scaleX(1);}
+.feat-cta:hover{color:var(--black);}
+.feat-cta span,.feat-cta-arr{position:relative;z-index:1;}
+.feat-cta:hover .feat-cta-arr{transform:translateX(4px);}
+.feat-cta-arr{transition:transform .38s;}
+
+/* SIZE SELECTOR */
+.size-row{display:flex;gap:6px;margin-bottom:2rem;}
+.sz{
+  width:38px;height:38px;
+  border:1px solid rgba(255,255,255,.12);
+  background:none;font-family:var(--sans);font-weight:300;font-size:9px;
+  color:rgba(255,255,255,.45);cursor:none;transition:all .2s;
+}
+.sz:hover,.sz.a{border-color:var(--white);background:var(--white);color:var(--black);}
+
+/* HISTORY / DROPS TABLE */
+.history-sec{padding:5rem 3rem;background:var(--white);}
+.history-head{margin-bottom:2.5rem;}
+.history-table{display:flex;flex-direction:column;}
+.ht-head{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;
+  padding:.75rem 0;border-bottom:1px solid var(--border-light);
+}
+.ht-h{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.45em;color:rgba(0,0,0,.3);text-transform:uppercase;}
+.ht-row{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;
+  padding:1.5rem 0;border-bottom:1px solid var(--border-light);
+  cursor:none;transition:background .2s;
+}
+.ht-row:hover{background:rgba(0,0,0,.015);}
+.ht-name{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--black);}
+.ht-name em{font-style:italic;font-size:14px;display:block;color:rgba(0,0,0,.35);font-family:var(--sans);font-weight:300;letter-spacing:0.2em;margin-top:2px;}
+.ht-val{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--black);display:flex;align-items:center;}
+.ht-status{display:flex;align-items:center;}
+.ht-pill{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.35em;text-transform:uppercase;padding:3px 10px;border:1px solid;}
+.ht-pill.sold{border-color:rgba(0,0,0,.15);color:rgba(0,0,0,.35);}
+.ht-pill.live{border-color:var(--black);color:var(--black);}
+
+/* NFC STRIP */
+.nfc-strip{
+  background:var(--black);
+  border-top:1px solid var(--border);
+  padding:3.5rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;gap:3rem;
+}
+.nfc-left{display:flex;align-items:center;gap:1.75rem;}
+.nfc-dot{width:7px;height:7px;background:var(--white);border-radius:50%;opacity:.3;animation:pulse 2.2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:.08;transform:scale(.65);}}
+.nfc-title{font-family:var(--serif);font-weight:400;font-size:22px;color:var(--white);}
+.nfc-sub{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-top:4px;}
+.nfc-right{font-family:var(--sans);font-weight:200;font-size:9px;letter-spacing:0.42em;color:rgba(255,255,255,.18);text-transform:uppercase;text-align:right;line-height:2.4;}
+.nfc-cta{
+  font-family:var(--sans);font-weight:300;font-size:10px;
+  letter-spacing:0.35em;color:rgba(255,255,255,.38);
+  text-transform:uppercase;text-decoration:none;cursor:none;
+  border:1px solid rgba(255,255,255,.1);padding:12px 20px;
+  transition:all .3s;flex-shrink:0;
+}
+.nfc-cta:hover{color:var(--white);border-color:rgba(255,255,255,.32);}
+
+/* WAITLIST */
+.wl{background:var(--black);padding:6rem 3rem;text-align:center;border-top:1px solid var(--border);}
+.wl-head{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,64px);color:var(--white);letter-spacing:0.03em;margin-bottom:.75rem;}
+.wl-head em{font-style:italic;font-weight:300;}
+.wl-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:2.75rem;}
+.wl-form{display:flex;max-width:380px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(255,255,255,.15);}
+.wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--white);}
+.wl-in::placeholder{color:rgba(255,255,255,.2);}
+.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--white);text-transform:uppercase;cursor:none;padding:12px 0;transition:opacity .3s;}
+.wl-btn:hover{opacity:.4;}
+.wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(255,255,255,.15);text-transform:uppercase;}
+
+/* FOOTER */
+footer{background:var(--black);padding:5rem 3rem 2.5rem;border-top:1px solid var(--border);}
+.ft-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;padding-bottom:4rem;border-bottom:1px solid var(--border);}
+.ft-brand{font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;margin-bottom:.75rem;}
+.ft-tag{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.12em;color:rgba(255,255,255,.13);line-height:2.4;text-transform:uppercase;}
+.ft-col-h{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-l{display:block;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.13);text-transform:uppercase;margin-bottom:.875rem;text-decoration:none;cursor:none;transition:color .2s;}
+.ft-l:hover{color:rgba(255,255,255,.45);}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;}
+.ft-copy{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.1);text-transform:uppercase;}
+.ft-nfc{display:flex;align-items:center;gap:7px;}
+.ft-nfc-dot{width:4px;height:4px;background:var(--white);border-radius:50%;opacity:.15;}
+.ft-nfc-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.42em;color:rgba(255,255,255,.12);text-transform:uppercase;}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:800;backdrop-filter:blur(10px);align-items:center;justify-content:center;opacity:0;transition:opacity .4s;}
+.mo.open{display:flex;}
+.mo.vis{opacity:1;}
+.mo-panel{
+  background:var(--white);width:88%;max-width:880px;
+  max-height:90vh;overflow-y:auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  position:relative;
+  transform:translateY(18px);transition:transform .42s;
+}
+.mo.vis .mo-panel{transform:translateY(0);}
+.mo-img-col{aspect-ratio:3/4;overflow:hidden;}
+.mo-img-col img{width:100%;height:100%;object-fit:cover;filter:brightness(.88);}
+.mo-body{padding:3rem;display:flex;flex-direction:column;justify-content:center;}
+.mo-close{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;color:rgba(0,0,0,.35);cursor:none;text-transform:uppercase;transition:color .2s;}
+.mo-close:hover{color:var(--black);}
+.mo-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;color:rgba(0,0,0,.35);text-transform:uppercase;margin-bottom:.75rem;}
+.mo-name{font-family:var(--serif);font-weight:400;font-size:32px;color:var(--black);letter-spacing:0.02em;margin-bottom:.5rem;}
+.mo-serial{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(0,0,0,.32);margin-bottom:2rem;}
+.mo-price{font-family:var(--serif);font-style:italic;font-size:32px;color:var(--black);margin-bottom:.5rem;}
+.mo-stk{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;text-transform:uppercase;margin-bottom:2rem;}
+.mo-stk.a{color:var(--black);}
+.mo-stk.s{color:rgba(0,0,0,.28);}
+.mo-szl{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;color:rgba(0,0,0,.35);text-transform:uppercase;margin-bottom:.75rem;}
+.mo-sizes{display:flex;gap:6px;margin-bottom:2rem;}
+.mosz{width:40px;height:40px;border:1px solid rgba(0,0,0,.12);background:none;font-family:var(--sans);font-weight:300;font-size:9px;color:var(--black);cursor:none;transition:all .2s;}
+.mosz.a,.mosz:hover{border-color:var(--black);background:var(--black);color:var(--white);}
+.mo-add{width:100%;background:var(--black);color:var(--white);font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;text-transform:uppercase;padding:15px;border:none;cursor:none;margin-bottom:1rem;transition:opacity .3s;}
+.mo-add:hover{opacity:.75;}
+.mo-add.sold{background:rgba(0,0,0,.08);color:rgba(0,0,0,.3);cursor:default;}
+.mo-wish{width:100%;background:none;color:var(--black);font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;text-transform:uppercase;padding:14px;border:1px solid rgba(0,0,0,.1);cursor:none;transition:border-color .2s;}
+.mo-wish:hover{border-color:var(--black);}
+.mo-specs{margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border-light);}
+.msp{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-light);}
+.msp:last-child{border-bottom:none;}
+.msp-k{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.35em;color:rgba(0,0,0,.28);text-transform:uppercase;}
+.msp-v{font-family:var(--serif);font-size:14px;color:var(--black);}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DIVUS</a>
+  <div class="nav-links">
+    <a class="nl active" href="collection.html">Collection</a>
+    <a class="nl" href="merch.html">Merch</a>
+    <a class="nl" href="atelier.html">L'atelier</a>
+    <a class="nl" href="certification.html">Certification</a>
+  </div>
+  <div class="nav-right">
+    <a class="nr" href="#">Compte</a>
+    <a class="nr" href="#">Sac</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header rv">
+  <div class="page-header-bg"></div>
+  <div class="page-header-content">
+    <div class="ph-eye">Pièces maîtresses</div>
+    <div class="ph-title">La<br><em>Collection.</em></div>
+    <div class="ph-sub">Chaque drop est un événement · Sold out · Jamais restocké</div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filters">
+    <button class="ftab active" onclick="filt('all',this)">Tous les drops</button>
+    <button class="ftab" onclick="filt('available',this)">Disponibles</button>
+    <button class="ftab" onclick="filt('soldout',this)">Sold out</button>
+  </div>
+  <div class="filter-right" id="fcount">3 séries</div>
+</div>
+
+<!-- FEATURED DROP -->
+<div class="featured rv" id="featured" data-s="available">
+  <div class="feat-img">
+    <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=85&fit=crop" alt="Drop III SVJ">
+    <div class="feat-overlay"></div>
+    <div class="feat-badge">Nouvelle série</div>
+  </div>
+  <div class="feat-copy">
+    <div class="feat-eye">Drop III · Série en cours</div>
+    <div class="feat-title">DIVUS <em>×</em><br>Lamborghini SVJ</div>
+    <div class="feat-meta">
+      963 exemplaires<br>
+      Gris ardoise · Broderie fil argent<br>
+      Coton Supima / Cachemire 400g<br>
+      Fabricatum in Gallia · MMXXV
+    </div>
+    <div class="feat-price">1 490 €</div>
+    <div class="feat-stock">312 restants sur 963</div>
+    <div class="feat-spec">
+      <div class="fs"><span class="fs-k">Certification</span><span class="fs-v">NFC NTAG424</span></div>
+      <div class="fs"><span class="fs-k">Atelier</span><span class="fs-v">Paris · Haute couture</span></div>
+      <div class="fs"><span class="fs-k">Restock</span><span class="fs-v">Impossible · Jamais</span></div>
+    </div>
+    <div class="size-row">
+      <button class="sz" onclick="ss(this)">XS</button>
+      <button class="sz" onclick="ss(this)">S</button>
+      <button class="sz a" onclick="ss(this)">M</button>
+      <button class="sz" onclick="ss(this)">L</button>
+      <button class="sz" onclick="ss(this)">XL</button>
+    </div>
+    <a class="feat-cta" href="#"><span>Ajouter au sac</span><span class="feat-cta-arr">→</span></a>
+  </div>
+</div>
+
+<!-- GRID DROPS -->
+<div class="pgrid rv" id="pgrid" style="margin:1px 3rem 0;">
+  <div class="pc" data-s="soldout" onclick="om('Drop I','Édition fondatrice','100 pièces · Noir absolu · 2024','1 300','soldout','https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800&q=85&fit=crop')">
+    <div class="pc-iw">
+      <img class="pc-img" src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80&fit=crop" alt="Drop I">
+      <div class="pc-badge series">Série I</div>
+      <div class="pc-badge sold">Sold out</div>
+      <div class="pc-hover">Voir le détail</div>
+    </div>
+    <div class="pc-info">
+      <div class="pc-name">Drop I — Édition fondatrice</div>
+      <div class="pc-collab">Série inaugurale · 2024</div>
+      <div class="pc-row"><span class="pc-price">1 300 €</span><span class="pc-stk out">Épuisé</span></div>
+    </div>
+  </div>
+
+  <div class="pc" data-s="soldout" onclick="om('Drop II','Collab horlogerie','250 pièces · Crème ivoire · 2025','1 400','soldout','https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=85&fit=crop')">
+    <div class="pc-iw">
+      <img class="pc-img" src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80&fit=crop" alt="Drop II">
+      <div class="pc-badge series">Série II</div>
+      <div class="pc-badge sold">Sold out</div>
+      <div class="pc-hover">Voir le détail</div>
+    </div>
+    <div class="pc-info">
+      <div class="pc-name">Drop II — Horlogerie</div>
+      <div class="pc-collab">Collab horlogerie · 2025</div>
+      <div class="pc-row"><span class="pc-price">1 400 €</span><span class="pc-stk out">Épuisé</span></div>
+    </div>
+  </div>
+
+  <div class="pc" data-s="available" onclick="om('Drop III — SVJ','Lamborghini × DIVUS','963 pièces · Gris ardoise · 2025','1 490','available','https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=85&fit=crop')">
+    <div class="pc-iw">
+      <img class="pc-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&fit=crop" alt="Drop III">
+      <div class="pc-badge new-drop">Disponible</div>
+      <div class="pc-hover">Ajouter au sac</div>
+    </div>
+    <div class="pc-info">
+      <div class="pc-name">Drop III — SVJ</div>
+      <div class="pc-collab">Lamborghini × DIVUS · 2025</div>
+      <div class="pc-row"><span class="pc-price">1 490 €</span><span class="pc-stk live">312 restants</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORIQUE TABLE -->
+<section class="history-sec rv">
+  <div class="history-head">
+    <div style="font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(0,0,0,.35);text-transform:uppercase;margin-bottom:.875rem;">Historique</div>
+    <div style="font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.5vw,44px);color:var(--black);letter-spacing:0.03em;">Tous les <em style="font-style:italic;">drops.</em></div>
+  </div>
+  <div class="history-table">
+    <div class="ht-head">
+      <div class="ht-h">Série</div>
+      <div class="ht-h">Pièces</div>
+      <div class="ht-h">Prix</div>
+      <div class="ht-h">Sold out</div>
+      <div class="ht-h">Année</div>
+      <div class="ht-h">Statut</div>
+    </div>
+    <div class="ht-row">
+      <div class="ht-name">Drop I — Édition fondatrice<em>Série inaugurale</em></div>
+      <div class="ht-val">100</div>
+      <div class="ht-val">1 300 €</div>
+      <div class="ht-val">72h</div>
+      <div class="ht-val">2024</div>
+      <div class="ht-status"><span class="ht-pill sold">Sold out</span></div>
+    </div>
+    <div class="ht-row">
+      <div class="ht-name">Drop II — Horlogerie<em>Collab horlogerie</em></div>
+      <div class="ht-val">250</div>
+      <div class="ht-val">1 400 €</div>
+      <div class="ht-val">48h</div>
+      <div class="ht-val">2025</div>
+      <div class="ht-status"><span class="ht-pill sold">Sold out</span></div>
+    </div>
+    <div class="ht-row">
+      <div class="ht-name">Drop III — SVJ<em>Lamborghini × DIVUS</em></div>
+      <div class="ht-val">963</div>
+      <div class="ht-val">1 490 €</div>
+      <div class="ht-val">—</div>
+      <div class="ht-val">2025</div>
+      <div class="ht-status"><span class="ht-pill live">En cours</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- NFC STRIP -->
+<div class="nfc-strip rv">
+  <div class="nfc-left">
+    <div class="nfc-dot"></div>
+    <div>
+      <div class="nfc-title">Approchez votre téléphone.</div>
+      <div class="nfc-sub">NFC NTAG424 · Cryptographie asymétrique · Non clonable</div>
+    </div>
+  </div>
+  <div class="nfc-right">CERTIFIED<br>NEVER REPRODUCED<br>FABRICATUM IN GALLIA</div>
+  <a class="nfc-cta" href="certification.html">La certification →</a>
+</div>
+
+<!-- WAITLIST -->
+<div class="wl">
+  <div class="wl-head rv">Le prochain <em>drop.</em></div>
+  <div class="wl-sub rv">Liste prioritaire · Accès 24h avant · Aucune publicité</div>
+  <div class="wl-form rv">
+    <input class="wl-in" type="email" placeholder="votre@email.com">
+    <button class="wl-btn">→</button>
+  </div>
+  <div class="wl-note rv">Uniquement les drops à venir</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div>
+      <div class="ft-brand">DIVUS</div>
+      <div class="ft-tag">Maison de collection · Paris · Amsterdam</div>
+      <div class="ft-desc">Éditions limitées certifiées NFC.<br>Jamais un restock. Jamais.<br>Fabricatum in Gallia · MMXXV</div>
+    </div>
+    <div>
+      <div class="ft-col-h">Boutique</div>
+      <a class="ft-l" href="collection.html">T-shirts collector</a>
+      <a class="ft-l" href="merch.html">Merch</a>
+      <a class="ft-l" href="collection.html">Tous les drops</a>
+      <a class="ft-l" href="certification.html">Certification NFC</a>
+    </div>
+    <div>
+      <div class="ft-col-h">Maison</div>
+      <a class="ft-l" href="#">La vision</a>
+      <a class="ft-l" href="atelier.html">L'atelier</a>
+      <a class="ft-l" href="#">Partenaires</a>
+      <a class="ft-l" href="#">Presse</a>
+    </div>
+    <div>
+      <div class="ft-col-h">Service</div>
+      <a class="ft-l" href="#">Livraison</a>
+      <a class="ft-l" href="certification.html">Authentification</a>
+      <a class="ft-l" href="#">Contact</a>
+      <a class="ft-l" href="#">FAQ</a>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <div class="ft-copy">© MMXXV DIVUS · Tous droits réservés</div>
+    <div class="ft-nfc"><div class="ft-nfc-dot"></div><div class="ft-nfc-txt">NFC · NTAG424 · Certified</div></div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="mo" id="modal" onclick="mc(event)">
+  <div class="mo-panel">
+    <div class="mo-img-col"><img id="mi" src="" alt=""></div>
+    <div class="mo-body">
+      <button class="mo-close" onclick="cm()">✕ Fermer</button>
+      <div class="mo-eye" id="me"></div>
+      <div class="mo-name" id="mn"></div>
+      <div class="mo-serial" id="ms"></div>
+      <div class="mo-price" id="mp"></div>
+      <div class="mo-stk" id="mst"></div>
+      <div class="mo-szl">Taille</div>
+      <div class="mo-sizes">
+        <button class="mosz" onclick="ss2(this)">XS</button>
+        <button class="mosz" onclick="ss2(this)">S</button>
+        <button class="mosz a" onclick="ss2(this)">M</button>
+        <button class="mosz" onclick="ss2(this)">L</button>
+        <button class="mosz" onclick="ss2(this)">XL</button>
+      </div>
+      <button class="mo-add" id="ma">Ajouter au sac</button>
+      <button class="mo-wish">Ajouter à la liste de souhaits</button>
+      <div class="mo-specs">
+        <div class="msp"><span class="msp-k">Certification</span><span class="msp-v">NFC NTAG424</span></div>
+        <div class="msp"><span class="msp-k">Matière</span><span class="msp-v">Coton Supima / Cachemire 400g</span></div>
+        <div class="msp"><span class="msp-k">Atelier</span><span class="msp-v">Haute couture · Paris</span></div>
+        <div class="msp"><span class="msp-k">Finitions</span><span class="msp-v">Main · Broderie haute densité</span></div>
+        <div class="msp"><span class="msp-k">Livraison</span><span class="msp-v">DHL Express 48h · Coffret bois</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* CURSOR */
+const cur=document.getElementById('cur'),cr=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(a);})();
+
+/* REVEAL */
+const rvs=document.querySelectorAll('.rv');
+function reveal(){rvs.forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*.9)el.classList.add('on');});}
+reveal();
+window.addEventListener('scroll',reveal);
+
+/* FILTER */
+function filt(f,tab){
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  const feat=document.getElementById('featured');
+  const cards=document.querySelectorAll('#pgrid .pc');
+  let count=0;
+  if(f==='all'){
+    feat.style.display='grid';count=3;
+    cards.forEach(c=>c.style.display='');
+  } else {
+    feat.style.display=feat.dataset.s===f?'grid':'none';
+    if(feat.dataset.s===f)count++;
+    cards.forEach(c=>{
+      const show=c.dataset.s===f;
+      c.style.display=show?'':'none';
+      if(show)count++;
+    });
+  }
+  document.getElementById('fcount').textContent=count+' série'+(count>1?'s':'');
+}
+
+/* MODAL */
+function om(name,eye,serial,price,status,img){
+  document.getElementById('mi').src=img;
+  document.getElementById('mn').textContent=name;
+  document.getElementById('me').textContent=eye;
+  document.getElementById('ms').textContent=serial;
+  document.getElementById('mp').textContent=price+' €';
+  const st=document.getElementById('mst'),btn=document.getElementById('ma');
+  if(status==='soldout'){
+    st.textContent='Épuisé — aucun restock possible';st.className='mo-stk s';
+    btn.textContent='Épuisé';btn.className='mo-add sold';
+  } else {
+    st.textContent='En stock · 312 restants';st.className='mo-stk a';
+    btn.textContent='Ajouter au sac';btn.className='mo-add';
+  }
+  const m=document.getElementById('modal');
+  m.style.display='flex';
+  setTimeout(()=>m.classList.add('vis'),10);
+  document.body.style.overflow='hidden';
+}
+function cm(){
+  const m=document.getElementById('modal');
+  m.classList.remove('vis');
+  setTimeout(()=>{m.style.display='none';document.body.style.overflow='';},420);
+}
+function mc(e){if(e.target===document.getElementById('modal'))cm();}
+function ss(b){document.querySelectorAll('.sz').forEach(x=>x.classList.remove('a'));b.classList.add('a');}
+function ss2(b){document.querySelectorAll('.mosz').forEach(x=>x.classList.remove('a'));b.classList.add('a');}
+</script>
+</body>
+</html>

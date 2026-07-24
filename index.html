@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#0A0A0A;
+  --white:#FAFAF8;
+  --gray:#888;
+  --border:rgba(255,255,255,0.08);
+  --border-dark:rgba(0,0,0,0.08);
+  --serif:'Cormorant Garamond',serif;
+  --sans:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:none;overflow-x:hidden;}
+
+/* CURSOR */
+#cur{width:6px;height:6px;background:var(--white);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s;}
+#cur-r{width:32px;height:32px;border:1px solid rgba(255,255,255,0.35);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+body.on-light #cur{background:var(--black);}
+body.on-light #cur-r{border-color:rgba(0,0,0,0.25);}
+
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;height:56px;
+  transition:background .5s,border-color .5s;
+}
+.nav.bg{background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:0.35em;color:var(--white);text-transform:uppercase;text-decoration:none;transition:opacity .3s;}
+.nav-logo:hover{opacity:.6;}
+.nav-links{display:flex;gap:2rem;}
+.nl{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.5);text-transform:uppercase;text-decoration:none;transition:color .3s;cursor:none;}
+.nl:hover{color:var(--white);}
+.nav-right{display:flex;gap:1.5rem;align-items:center;}
+.nr{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.5);text-transform:uppercase;text-decoration:none;transition:color .3s;cursor:none;}
+.nr:hover{color:var(--white);}
+
+/* LANDING PAGE — SECTION 0 */
+.landing{
+  height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;background:var(--black);
+}
+.landing-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=90&fit=crop&crop=center');
+  background-size:cover;background-position:center 35%;
+  opacity:0;
+  transition:opacity 2s ease;
+  filter:brightness(.28) contrast(1.1);
+}
+.landing-bg.show{opacity:1;}
+.landing-logo{
+  font-family:var(--serif);font-weight:500;
+  font-size:clamp(90px,16vw,200px);
+  letter-spacing:0.28em;
+  color:var(--white);
+  text-transform:uppercase;
+  line-height:1;
+  position:relative;z-index:2;
+  opacity:0;transform:translateY(16px);
+  transition:opacity 1s .6s, transform 1s .6s;
+}
+.landing-logo.show{opacity:1;transform:translateY(0);}
+.landing-sub{
+  font-family:var(--sans);font-weight:200;
+  font-size:10px;letter-spacing:0.55em;
+  color:rgba(255,255,255,0.35);
+  text-transform:uppercase;
+  margin-top:1.5rem;
+  position:relative;z-index:2;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .8s 1.2s, transform .8s 1.2s;
+}
+.landing-sub.show{opacity:1;transform:translateY(0);}
+.landing-cta{
+  position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);
+  z-index:2;display:flex;flex-direction:column;align-items:center;gap:.75rem;
+  opacity:0;transition:opacity .8s 1.8s;cursor:none;
+}
+.landing-cta.show{opacity:1;}
+.landing-cta-txt{font-family:var(--sans);font-weight:200;font-size:9px;letter-spacing:0.55em;color:rgba(255,255,255,0.3);text-transform:uppercase;}
+.landing-cta-line{width:1px;height:40px;background:rgba(255,255,255,0.15);animation:lineAnim 1.8s 2.2s infinite;}
+@keyframes lineAnim{0%{transform:scaleY(0);transform-origin:top;opacity:0}50%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);transform-origin:bottom;opacity:0}}
+
+/* SITE CONTENT */
+.site{display:none;}
+.site.show{display:block;}
+
+/* HERO */
+.hero{height:100vh;position:relative;overflow:hidden;background:var(--black);}
+.hero-img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 35%;
+  filter:brightness(.5) contrast(1.05);
+  transform:scale(1.06);
+  transition:transform 10s ease;
+}
+.hero-img.zoomed{transform:scale(1);}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.9) 0%,rgba(10,10,10,.2) 50%,transparent 100%);
+}
+.hero-content{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:5rem 2.5rem;
+  display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:4rem;
+}
+.hero-title{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(48px,7vw,90px);
+  color:var(--white);letter-spacing:0.04em;
+  line-height:1.05;
+}
+.hero-title em{font-style:italic;font-weight:300;}
+.hero-right{text-align:right;}
+.hero-serial-n{
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:11px;color:rgba(255,255,255,0.25);
+  letter-spacing:0.15em;margin-bottom:.25rem;
+}
+.hero-serial-v{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(48px,6vw,80px);
+  color:rgba(255,255,255,0.07);
+  line-height:1;
+}
+.hero-cta{
+  margin-top:2.5rem;
+  display:inline-flex;align-items:center;gap:.875rem;
+  font-family:var(--sans);font-weight:300;font-size:10px;
+  letter-spacing:0.35em;color:var(--white);
+  text-transform:uppercase;text-decoration:none;
+  border:1px solid rgba(255,255,255,0.2);
+  padding:14px 28px;transition:all .35s;cursor:none;
+  position:relative;overflow:hidden;
+}
+.hero-cta::before{content:'';position:absolute;inset:0;background:var(--white);transform:scaleX(0);transform-origin:left;transition:transform .4s;}
+.hero-cta:hover::before{transform:scaleX(1);}
+.hero-cta:hover{color:var(--black);}
+.hero-cta span,.hero-cta-arr{position:relative;z-index:1;}
+.hero-cta:hover .hero-cta-arr{transform:translateX(4px);}
+.hero-cta-arr{transition:transform .35s;}
+
+/* BAND */
+.band{
+  background:var(--white);overflow:hidden;
+  padding:.9rem 0;
+}
+.band-track{
+  display:flex;white-space:nowrap;
+  animation:marquee 24s linear infinite;
+}
+.bi{display:flex;align-items:center;gap:2.5rem;padding:0 2.5rem;flex-shrink:0;}
+.bt{
+  font-family:var(--sans);font-weight:300;font-size:9px;
+  letter-spacing:0.45em;color:rgba(10,10,10,0.45);text-transform:uppercase;
+}
+.bs{font-family:var(--serif);font-size:14px;color:rgba(10,10,10,0.2);}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* REVEAL */
+.r{opacity:0;transform:translateY(32px);transition:opacity .85s,transform .85s;}
+.r.v{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:.1s;}.rd2{transition-delay:.2s;}.rd3{transition-delay:.3s;}
+
+/* SECTION UTILITAIRES */
+.sec{padding:7rem 2.5rem;}
+.sec-white{background:var(--white);color:var(--black);}
+.s-eye{
+  font-family:var(--sans);font-weight:300;font-size:9px;
+  letter-spacing:0.5em;color:var(--gray);
+  text-transform:uppercase;margin-bottom:.875rem;
+}
+.sec-white .s-eye{color:rgba(10,10,10,0.4);}
+.s-head{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(36px,5vw,64px);
+  letter-spacing:0.03em;line-height:1.08;
+}
+.s-head em{font-style:italic;font-weight:300;}
+.sec-white .s-head{color:var(--black);}
+.rule{height:1px;background:var(--border);margin:2.5rem 0;}
+.rule-dark{height:1px;background:var(--border-dark);margin:2.5rem 0;}
+
+/* CONCEPT */
+.concept{display:grid;grid-template-columns:1fr 1fr;min-height:90vh;}
+.concept-img-col{position:relative;overflow:hidden;background:#111;}
+.concept-img{width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.05);transform:scale(1.04);transition:transform 1.1s ease;}
+.concept-img-col:hover .concept-img{transform:scale(1);}
+.concept-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.7) 0%,transparent 50%);
+}
+.concept-badge{
+  position:absolute;bottom:2rem;left:2rem;
+  display:flex;align-items:center;gap:8px;
+  border:1px solid rgba(255,255,255,.12);
+  padding:8px 14px;
+  background:rgba(10,10,10,.5);
+  backdrop-filter:blur(10px);
+}
+.concept-badge-dot{width:5px;height:5px;background:var(--white);border-radius:50%;opacity:.6;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:.6}50%{opacity:.15}}
+.concept-badge-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.5);text-transform:uppercase;}
+.concept-copy{background:var(--white);color:var(--black);padding:6rem 5rem;display:flex;flex-direction:column;justify-content:center;}
+.concept-body{font-family:var(--serif);font-weight:400;font-size:20px;color:#1a1a1a;line-height:1.95;margin-bottom:3rem;}
+.concept-body em{font-style:italic;color:var(--black);}
+.pillars{display:flex;flex-direction:column;}
+.pillar{display:flex;gap:1.5rem;padding:1.25rem 0;border-bottom:1px solid var(--border-dark);align-items:flex-start;}
+.pillar:first-child{border-top:1px solid var(--border-dark);}
+.p-n{font-family:var(--serif);font-style:italic;font-size:22px;color:rgba(10,10,10,0.2);flex-shrink:0;min-width:28px;line-height:1.3;}
+.p-t{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.2em;color:rgba(10,10,10,0.5);text-transform:uppercase;line-height:2;padding-top:3px;}
+
+/* FULL BLEED */
+.fb{position:relative;overflow:hidden;}
+.fb-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.45) contrast(1.05);}
+.fb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.85) 0%,rgba(10,10,10,.1) 55%,transparent 100%);}
+.fb-content{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:flex-end;padding:4rem 2.5rem;}
+.fb-row{display:flex;justify-content:space-between;align-items:flex-end;}
+.fb-series{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(28px,4vw,48px);color:rgba(255,255,255,.8);}
+.fb-detail{font-family:var(--sans);font-weight:200;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.25);text-transform:uppercase;line-height:2.2;text-align:right;}
+
+/* COLLECTION */
+.coll-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;}
+.ctabs{display:flex;gap:0;border-bottom:1px solid var(--border-dark);}
+.ctab{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(10,10,10,.4);text-transform:uppercase;padding:.75rem 1.25rem;cursor:none;border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .2s;}
+.ctab.active{color:var(--black);border-bottom-color:var(--black);}
+.ctab:hover:not(.active){color:var(--black);}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-dark);}
+.pc{background:var(--white);cursor:none;position:relative;overflow:hidden;}
+.pc-iw{aspect-ratio:3/4;overflow:hidden;position:relative;}
+.pc-img{width:100%;height:100%;object-fit:cover;filter:brightness(.9);transition:transform .9s cubic-bezier(.25,.46,.45,.94),filter .6s;}
+.pc:hover .pc-img{transform:scale(1.05);filter:brightness(.95);}
+.pc-badge{
+  position:absolute;top:1rem;left:1rem;
+  font-family:var(--sans);font-weight:400;font-size:8px;
+  letter-spacing:0.35em;text-transform:uppercase;padding:4px 10px;
+}
+.pc-badge.new-drop{background:var(--black);color:var(--white);}
+.pc-badge.sold{background:transparent;border:1px solid rgba(10,10,10,.2);color:rgba(10,10,10,.5);top:auto;bottom:1rem;}
+.pc-hover-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--black);color:var(--white);
+  font-family:var(--sans);font-weight:300;font-size:9px;
+  letter-spacing:0.35em;text-transform:uppercase;
+  padding:14px;text-align:center;
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
+}
+.pc:hover .pc-hover-bar{transform:translateY(0);}
+.pc-info{padding:1.5rem 1.25rem 2rem;background:var(--white);}
+.pc-name{font-family:var(--serif);font-weight:400;font-size:20px;color:var(--black);margin-bottom:4px;letter-spacing:0.02em;}
+.pc-meta{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(10,10,10,.4);text-transform:uppercase;margin-bottom:1rem;}
+.pc-row{display:flex;justify-content:space-between;align-items:baseline;}
+.pc-price{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--black);}
+.pc-stock{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.3em;color:rgba(10,10,10,.4);text-transform:uppercase;}
+.pc-stock.live{color:var(--black);}
+
+/* EDITORIAL */
+.editorial{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:340px 340px;gap:1px;background:var(--border-dark);}
+.ed{position:relative;overflow:hidden;cursor:none;}
+.ed img{width:100%;height:100%;object-fit:cover;filter:brightness(.75);transition:transform .9s ease,filter .5s;}
+.ed:hover img{transform:scale(1.04);filter:brightness(.85);}
+.ed-tall{grid-row:span 2;}
+.ed-cap{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:1.5rem;
+  background:linear-gradient(to top,rgba(10,10,10,.7) 0%,transparent 100%);
+  opacity:0;transition:opacity .4s;
+}
+.ed:hover .ed-cap{opacity:1;}
+.ed-cap-txt{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;color:rgba(255,255,255,.6);text-transform:uppercase;}
+
+/* ATELIER */
+.atelier{display:grid;grid-template-columns:1fr 1fr;min-height:85vh;}
+.atelier-copy{background:var(--black);padding:6rem 5rem;display:flex;flex-direction:column;justify-content:center;}
+.atelier-body{font-family:var(--serif);font-weight:300;font-size:19px;color:rgba(255,255,255,.4);line-height:2;margin:2.5rem 0;}
+.spec-list{display:flex;flex-direction:column;}
+.spec{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid var(--border);}
+.spec:first-child{border-top:1px solid var(--border);}
+.spec-k{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;color:rgba(255,255,255,.2);text-transform:uppercase;}
+.spec-v{font-family:var(--serif);font-size:15px;color:rgba(255,255,255,.55);letter-spacing:0.03em;}
+.atelier-img-col{position:relative;overflow:hidden;}
+.atelier-img{width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.05);transition:transform 1.2s ease;}
+.atelier-img-col:hover .atelier-img{transform:scale(1.03);}
+
+/* NFC */
+.nfc-sec{background:var(--black);padding:8rem 2.5rem;}
+.nfc-inner{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center;max-width:1100px;margin:0 auto;}
+.nfc-3d{perspective:1200px;}
+.nfc-card{
+  background:#111;border:1px solid rgba(255,255,255,.06);
+  padding:3rem;position:relative;
+  transform:rotateY(-10deg) rotateX(5deg);
+  transition:transform .7s cubic-bezier(.25,.46,.45,.94);
+}
+.nfc-3d:hover .nfc-card{transform:rotateY(0) rotateX(0);}
+.nfc-card::after{content:'';position:absolute;top:8px;left:8px;right:-8px;bottom:-8px;border:1px solid rgba(255,255,255,.03);pointer-events:none;}
+.cert-num{font-family:var(--serif);font-style:italic;font-size:72px;color:rgba(255,255,255,.15);line-height:1;margin-bottom:4px;}
+.cert-label{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.55em;color:rgba(255,255,255,.15);text-transform:uppercase;margin-bottom:2.5rem;}
+.cert-row{display:flex;gap:2.5rem;margin-bottom:2rem;}
+.cert-k{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.15);text-transform:uppercase;margin-bottom:4px;}
+.cert-v{font-family:var(--serif);font-size:15px;color:rgba(255,255,255,.45);}
+.cert-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.1);padding:6px 14px;}
+.cert-dot{width:5px;height:5px;background:var(--white);border-radius:50%;opacity:.4;animation:blink 2s infinite;}
+.cert-pill-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.3);text-transform:uppercase;}
+.nfc-copy .s-head{color:var(--white);}
+.nfc-copy .s-eye{color:rgba(255,255,255,.3);}
+.nfc-steps{display:flex;flex-direction:column;}
+.nfc-step{display:flex;gap:1.5rem;padding:1.25rem 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.nfc-step:first-child{border-top:1px solid var(--border);}
+.nfc-sn{font-family:var(--serif);font-style:italic;font-size:22px;color:rgba(255,255,255,.15);flex-shrink:0;min-width:28px;line-height:1.3;}
+.nfc-st{font-family:var(--serif);font-size:17px;color:rgba(255,255,255,.65);margin-bottom:3px;}
+.nfc-ss{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.25);text-transform:uppercase;line-height:2;}
+
+/* DROPS */
+.drops-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-dark);margin-top:3rem;}
+.drop{background:var(--white);padding:3rem 2.5rem;position:relative;transition:background .4s;cursor:none;}
+.drop:hover{background:#f5f5f3;}
+.drop::after{content:attr(data-s);position:absolute;top:1.75rem;right:1.75rem;font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;text-transform:uppercase;padding:3px 9px;}
+.drop[data-s="Sold out"]::after{color:rgba(10,10,10,.3);border:1px solid rgba(10,10,10,.1);}
+.drop[data-s="En cours"]::after{color:var(--black);border:1px solid rgba(10,10,10,.2);}
+.drop-num{font-family:var(--serif);font-style:italic;font-size:88px;color:rgba(10,10,10,.07);line-height:1;margin-bottom:1rem;transition:color .4s;}
+.drop:hover .drop-num{color:rgba(10,10,10,.1);}
+.drop-name{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--black);margin-bottom:4px;}
+.drop-detail{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;color:rgba(10,10,10,.35);text-transform:uppercase;margin-bottom:2rem;}
+.drop-stats{display:flex;gap:2rem;padding-top:1.5rem;border-top:1px solid var(--border-dark);}
+.ds-val{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--black);}
+.ds-key{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(10,10,10,.3);text-transform:uppercase;margin-top:2px;}
+
+/* MERCH */
+.merch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-dark);margin-top:3rem;}
+.mc{background:var(--white);cursor:none;overflow:hidden;}
+.mc-iw{aspect-ratio:1;overflow:hidden;}
+.mc-img{width:100%;height:100%;object-fit:cover;filter:brightness(.85);transition:transform .7s ease,filter .5s;}
+.mc:hover .mc-img{transform:scale(1.05);filter:brightness(.95);}
+.mc-info{padding:1rem 1rem 1.5rem;}
+.mc-name{font-family:var(--serif);font-size:16px;color:var(--black);margin-bottom:3px;}
+.mc-price{font-family:var(--serif);font-style:italic;font-size:15px;color:rgba(10,10,10,.4);}
+
+/* WAITLIST */
+.wl{background:var(--white);padding:8rem 2.5rem;text-align:center;}
+.wl-head{font-family:var(--serif);font-weight:400;font-size:clamp(36px,5vw,70px);color:var(--black);letter-spacing:0.03em;margin-bottom:.75rem;}
+.wl-head em{font-style:italic;font-weight:300;}
+.wl-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(10,10,10,.35);text-transform:uppercase;margin-bottom:3rem;}
+.wl-form{display:flex;max-width:400px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(10,10,10,.2);}
+.wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--black);}
+.wl-in::placeholder{color:rgba(10,10,10,.25);}
+.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.4em;color:var(--black);text-transform:uppercase;cursor:none;padding:12px 0;transition:opacity .3s;}
+.wl-btn:hover{opacity:.5;}
+.wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(10,10,10,.2);text-transform:uppercase;}
+
+/* FOOTER */
+footer{background:var(--black);padding:5rem 2.5rem 2.5rem;}
+.ft{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;padding-bottom:4rem;border-bottom:1px solid var(--border);}
+.ft-brand{font-family:var(--serif);font-weight:500;font-size:28px;letter-spacing:0.35em;color:var(--white);text-transform:uppercase;margin-bottom:.75rem;}
+.ft-tag{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:2rem;}
+.ft-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.12em;color:rgba(255,255,255,.15);line-height:2.3;text-transform:uppercase;}
+.ft-col-h{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-l{display:block;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.15);text-transform:uppercase;margin-bottom:.875rem;text-decoration:none;transition:color .2s;cursor:none;}
+.ft-l:hover{color:rgba(255,255,255,.5);}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;}
+.ft-copy{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.1);text-transform:uppercase;}
+.ft-nfc{display:flex;align-items:center;gap:7px;}
+.ft-nfc-dot{width:4px;height:4px;background:var(--white);border-radius:50%;opacity:.2;}
+.ft-nfc-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.15);text-transform:uppercase;}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;backdrop-filter:blur(8px);align-items:center;justify-content:center;opacity:0;transition:opacity .4s;}
+.mo.open{display:flex;}
+.mo.vis{opacity:1;}
+.mo-panel{background:var(--white);width:88%;max-width:860px;max-height:88vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;position:relative;transform:translateY(20px);transition:transform .45s;}
+.mo.vis .mo-panel{transform:translateY(0);}
+.mo-img{aspect-ratio:3/4;overflow:hidden;}
+.mo-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.85);}
+.mo-body{padding:3rem;display:flex;flex-direction:column;justify-content:center;}
+.mo-close{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;color:rgba(10,10,10,.4);cursor:none;text-transform:uppercase;}
+.mo-close:hover{color:var(--black);}
+.mo-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;color:rgba(10,10,10,.4);text-transform:uppercase;margin-bottom:.75rem;}
+.mo-name{font-family:var(--serif);font-weight:400;font-size:32px;color:var(--black);letter-spacing:0.03em;margin-bottom:.5rem;}
+.mo-serial{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(10,10,10,.35);margin-bottom:2rem;}
+.mo-price{font-family:var(--serif);font-style:italic;font-size:32px;color:var(--black);margin-bottom:.5rem;}
+.mo-stk{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;text-transform:uppercase;margin-bottom:2rem;}
+.mo-stk.a{color:var(--black);}
+.mo-stk.s{color:rgba(10,10,10,.3);}
+.mo-szl{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;color:rgba(10,10,10,.4);text-transform:uppercase;margin-bottom:.75rem;}
+.mo-sizes{display:flex;gap:6px;margin-bottom:2rem;}
+.sz{width:40px;height:40px;border:1px solid rgba(10,10,10,.12);background:none;font-family:var(--sans);font-weight:300;font-size:9px;color:var(--black);cursor:none;transition:all .2s;}
+.sz.a,.sz:hover{border-color:var(--black);background:var(--black);color:var(--white);}
+.mo-add{width:100%;background:var(--black);color:var(--white);font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;text-transform:uppercase;padding:15px;border:none;cursor:none;margin-bottom:1rem;transition:opacity .3s;}
+.mo-add:hover{opacity:.8;}
+.mo-add.sold{background:rgba(10,10,10,.12);color:rgba(10,10,10,.3);cursor:default;}
+.mo-wish{width:100%;background:none;color:var(--black);font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;text-transform:uppercase;padding:14px;border:1px solid rgba(10,10,10,.12);cursor:none;transition:border-color .2s;}
+.mo-wish:hover{border-color:var(--black);}
+.mo-specs{margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border-dark);}
+.msp{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-dark);}
+.msp:last-child{border-bottom:none;}
+.msp-k{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.35em;color:rgba(10,10,10,.3);text-transform:uppercase;}
+.msp-v{font-family:var(--serif);font-size:14px;color:var(--black);}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- LANDING -->
+<div class="landing" id="landing">
+  <div class="landing-bg" id="lbg"></div>
+  <div class="landing-logo" id="llogo">DIVUS</div>
+  <div class="landing-sub" id="lsub">Maison de Collection · Paris · Amsterdam</div>
+  <div class="landing-cta" id="lcta" onclick="enterSite()">
+    <div class="landing-cta-txt">Entrer</div>
+    <div class="landing-cta-line"></div>
+  </div>
+</div>
+
+<!-- SITE -->
+<div class="site" id="site">
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="nav-logo" href="#">DIVUS</a>
+  <div class="nav-links">
+    <a class="nl" href="#col-sec">Collection</a>
+    <a class="nl" href="#merch-sec">Merch</a>
+    <a class="nl" href="#drops-sec">Drops</a>
+    <a class="nl" href="#atelier-sec">L'atelier</a>
+  </div>
+  <div class="nav-right">
+    <a class="nr" href="#">Compte</a>
+    <a class="nr" href="#">Sac</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <img class="hero-img" id="hero-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=90&fit=crop&crop=center" alt="">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-title">La rareté<br><em>n'est pas une promesse.</em><br>C'est un fait.</div>
+      <a class="hero-cta" href="#col-sec"><span>Découvrir la collection</span><span class="hero-cta-arr">→</span></a>
+    </div>
+    <div class="hero-right">
+      <div class="hero-serial-n">Série en cours</div>
+      <div class="hero-serial-v">963</div>
+    </div>
+  </div>
+</section>
+
+<!-- BAND -->
+<div class="band">
+  <div class="band-track">
+    <div class="bi"><span class="bt">Édition limitée</span><span class="bs">·</span><span class="bt">Certifié NFC</span><span class="bs">·</span><span class="bt">Numéroté individuellement</span><span class="bs">·</span><span class="bt">Never reproduced</span><span class="bs">·</span><span class="bt">Fabricatum in Gallia</span><span class="bs">·</span><span class="bt">Haute couture · Paris</span><span class="bs">·</span><span class="bt">MMXXV</span><span class="bs">·</span></div>
+    <div class="bi"><span class="bt">Édition limitée</span><span class="bs">·</span><span class="bt">Certifié NFC</span><span class="bs">·</span><span class="bt">Numéroté individuellement</span><span class="bs">·</span><span class="bt">Never reproduced</span><span class="bs">·</span><span class="bt">Fabricatum in Gallia</span><span class="bs">·</span><span class="bt">Haute couture · Paris</span><span class="bs">·</span><span class="bt">MMXXV</span><span class="bs">·</span></div>
+  </div>
+</div>
+
+<!-- CONCEPT -->
+<section class="concept r">
+  <div class="concept-img-col">
+    <img class="concept-img" src="https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=900&q=85&fit=crop" alt="">
+    <div class="concept-overlay"></div>
+    <div class="concept-badge"><div class="concept-badge-dot"></div><div class="concept-badge-txt">NFC · NTAG424 · Certified</div></div>
+  </div>
+  <div class="concept-copy">
+    <div class="s-eye r rd1">Le concept</div>
+    <div class="s-head r rd2">La rareté <em>héritée.</em></div>
+    <div class="rule-dark r rd2"></div>
+    <p class="concept-body r rd2">DIVUS ne crée pas la rareté. Elle l'hérite de l'objet qu'elle célèbre. 963 Lamborghini SVJ produites — 963 t-shirts DIVUS SVJ. Pas un de plus. Jamais.</p>
+    <div class="pillars r rd3">
+      <div class="pillar"><div class="p-n">I.</div><div class="p-t">Le nombre d'exemplaires est dicté par notre partenaire — pas par nous</div></div>
+      <div class="pillar"><div class="p-n">II.</div><div class="p-t">Confectionné à la main · Ateliers haute couture · Paris</div></div>
+      <div class="pillar"><div class="p-n">III.</div><div class="p-t">Puce NFC NTAG424 · Cryptographie asymétrique · Non clonable</div></div>
+      <div class="pillar"><div class="p-n">IV.</div><div class="p-t">Restock contractuellement impossible · Le vêtement devient une archive</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL BLEED -->
+<div class="fb" style="height:78vh;">
+  <img class="fb-img" src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=1920&q=85&fit=crop" alt="" style="object-position:center 40%;">
+  <div class="fb-overlay"></div>
+  <div class="fb-content">
+    <div class="fb-row">
+      <div class="fb-series">SERIES III — SVJ</div>
+      <div class="fb-detail">Lamborghini Aventador SVJ<br>963 exemplaires · MMXXV<br>CERTIFIED · NEVER REPRODUCED</div>
+    </div>
+  </div>
+</div>
+
+<!-- COLLECTION -->
+<section class="sec sec-white" id="col-sec">
+  <div class="coll-header r">
+    <div><div class="s-eye">Pièces maîtresses</div><div class="s-head">T-shirts <em>collector.</em></div></div>
+    <div class="ctabs">
+      <div class="ctab active" onclick="fp('all',this)">Tous</div>
+      <div class="ctab" onclick="fp('available',this)">Disponibles</div>
+      <div class="ctab" onclick="fp('soldout',this)">Sold out</div>
+    </div>
+  </div>
+  <div class="pgrid r" id="pg">
+    <div class="pc" data-s="soldout" onclick="om('Drop I','Édition fondatrice','100 pièces · Noir absolu · 2024','1 300','soldout','https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800&q=85&fit=crop')">
+      <div class="pc-iw"><img class="pc-img" src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80&fit=crop" alt=""><div class="pc-badge sold">Sold out</div><div class="pc-hover-bar">Voir le détail</div></div>
+      <div class="pc-info"><div class="pc-name">Drop I — Édition fondatrice</div><div class="pc-meta">100 pièces · Noir absolu · 2024</div><div class="pc-row"><span class="pc-price">1 300 €</span><span class="pc-stock">Épuisé</span></div></div>
+    </div>
+    <div class="pc" data-s="soldout" onclick="om('Drop II','Collab horlogerie','250 pièces · Crème ivoire · 2025','1 400','soldout','https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=85&fit=crop')">
+      <div class="pc-iw"><img class="pc-img" src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80&fit=crop" alt=""><div class="pc-badge sold">Sold out</div><div class="pc-hover-bar">Voir le détail</div></div>
+      <div class="pc-info"><div class="pc-name">Drop II — Horlogerie</div><div class="pc-meta">250 pièces · Crème ivoire · 2025</div><div class="pc-row"><span class="pc-price">1 400 €</span><span class="pc-stock">Épuisé</span></div></div>
+    </div>
+    <div class="pc" data-s="available" onclick="om('Drop III — SVJ','Lamborghini × DIVUS','963 pièces · Gris ardoise · 2025','1 490','available','https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=85&fit=crop')">
+      <div class="pc-iw"><img class="pc-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&fit=crop" alt=""><div class="pc-badge new-drop">Nouvelle série</div><div class="pc-hover-bar">Ajouter au sac</div></div>
+      <div class="pc-info"><div class="pc-name">Drop III — SVJ</div><div class="pc-meta">963 pièces · Gris ardoise · 2025</div><div class="pc-row"><span class="pc-price">1 490 €</span><span class="pc-stock live">312 restants</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL -->
+<div class="editorial r">
+  <div class="ed ed-tall"><img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=700&q=85&fit=crop" alt=""><div class="ed-cap"><div class="ed-cap-txt">Confectionné à la main · Atelier Paris</div></div></div>
+  <div class="ed"><img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=700&q=85&fit=crop" alt=""><div class="ed-cap"><div class="ed-cap-txt">Étiquette cuir · N° de série gravé</div></div></div>
+  <div class="ed"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=85&fit=crop&crop=right" alt=""><div class="ed-cap"><div class="ed-cap-txt">L'objet célébré · SVJ · MMXXV</div></div></div>
+  <div class="ed"><img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=700&q=85&fit=crop" alt=""><div class="ed-cap"><div class="ed-cap-txt">Coffret bois laqué · Gravure laser</div></div></div>
+</div>
+
+<!-- ATELIER -->
+<section class="atelier r" id="atelier-sec">
+  <div class="atelier-copy">
+    <div class="s-eye">L'atelier</div>
+    <div class="s-head" style="color:var(--white);">Fait à la main.<br><em>À Paris.</em></div>
+    <div class="rule"></div>
+    <p class="atelier-body">Chaque pièce est confectionnée dans des ateliers parisiens de haute couture. Le même savoir-faire que Chanel, Dior, Margiela. L'objet est une archive, pas un produit.</p>
+    <div class="spec-list">
+      <div class="spec"><span class="spec-k">Matière</span><span class="spec-v">Coton Supima 85% · Cachemire A 15%</span></div>
+      <div class="spec"><span class="spec-k">Grammage</span><span class="spec-v">400g / m²</span></div>
+      <div class="spec"><span class="spec-k">Finition</span><span class="spec-v">Garment washed · Broderie main</span></div>
+      <div class="spec"><span class="spec-k">Étiquette</span><span class="spec-v">Cuir pleine fleur · Gravé à chaud</span></div>
+      <div class="spec"><span class="spec-k">Origine</span><span class="spec-v">Fabricatum in Gallia</span></div>
+    </div>
+  </div>
+  <div class="atelier-img-col">
+    <img class="atelier-img" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&q=85&fit=crop" alt="">
+  </div>
+</section>
+
+<!-- NFC -->
+<section class="nfc-sec" id="nfc">
+  <div class="nfc-inner">
+    <div class="nfc-3d r">
+      <div class="nfc-card">
+        <div class="cert-num">№ 347</div>
+        <div class="cert-label">sur 963 exemplaires · Series III · SVJ · MMXXV</div>
+        <div class="cert-row">
+          <div><div class="cert-k">Édition</div><div class="cert-v">SVJ · 2025</div></div>
+          <div><div class="cert-k">Atelier</div><div class="cert-v">Paris</div></div>
+          <div><div class="cert-k">Restock</div><div class="cert-v">Impossible</div></div>
+        </div>
+        <div class="cert-pill"><div class="cert-dot"></div><div class="cert-pill-txt">NFC · NTAG424 · Certified · Never reproduced</div></div>
+      </div>
+    </div>
+    <div class="nfc-copy r">
+      <div class="s-eye">Certification</div>
+      <div class="s-head">Approchez.<br><em>Vérifiez.</em></div>
+      <div class="rule"></div>
+      <div class="nfc-steps">
+        <div class="nfc-step"><div class="nfc-sn">I.</div><div><div class="nfc-st">Approchez votre téléphone</div><div class="nfc-ss">De l'étiquette intérieure · Aucune application</div></div></div>
+        <div class="nfc-step"><div class="nfc-sn">II.</div><div><div class="nfc-st">Vérification cryptographique</div><div class="nfc-ss">NTAG424 · Asymétrique · Non clonable</div></div></div>
+        <div class="nfc-step"><div class="nfc-sn">III.</div><div><div class="nfc-st">Le certificat s'affiche</div><div class="nfc-ss">Numéro · Série · Atelier · Date</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECOND FULL BLEED -->
+<div class="fb" style="height:55vh;">
+  <img class="fb-img" src="https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=1920&q=85&fit=crop" alt="" style="object-position:center 20%;">
+  <div class="fb-overlay" style="background:linear-gradient(to top,rgba(10,10,10,.9) 0%,rgba(10,10,10,.2) 60%,transparent 100%);"></div>
+  <div class="fb-content">
+    <div class="fb-row">
+      <div class="fb-series" style="font-size:clamp(18px,2.5vw,28px);">Le luxe s'exprime par la texture.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DROPS -->
+<section class="sec sec-white" id="drops-sec">
+  <div class="r"><div class="s-eye">Historique</div><div class="s-head">Tous les <em>drops.</em></div></div>
+  <div class="drops-grid r">
+    <div class="drop" data-s="Sold out"><div class="drop-num">I</div><div class="drop-name">Édition fondatrice</div><div class="drop-detail">Première série · 2024</div><div class="drop-stats"><div><div class="ds-val">100</div><div class="ds-key">Pièces</div></div><div><div class="ds-val">72h</div><div class="ds-key">Sold out</div></div><div><div class="ds-val">1 300€</div><div class="ds-key">Prix</div></div></div></div>
+    <div class="drop" data-s="Sold out"><div class="drop-num">II</div><div class="drop-name">Horlogerie</div><div class="drop-detail">Collab horlogerie · 2025</div><div class="drop-stats"><div><div class="ds-val">250</div><div class="ds-key">Pièces</div></div><div><div class="ds-val">48h</div><div class="ds-key">Sold out</div></div><div><div class="ds-val">1 400€</div><div class="ds-key">Prix</div></div></div></div>
+    <div class="drop" data-s="En cours"><div class="drop-num" style="color:rgba(10,10,10,.05);">III</div><div class="drop-name">SVJ</div><div class="drop-detail">Lamborghini · 2025</div><div class="drop-stats"><div><div class="ds-val">963</div><div class="ds-key">Pièces</div></div><div><div class="ds-val">312</div><div class="ds-key">Restants</div></div><div><div class="ds-val">1 490€</div><div class="ds-key">Prix</div></div></div></div>
+  </div>
+</section>
+
+<!-- MERCH -->
+<section class="sec sec-white" id="merch-sec" style="padding-top:0;">
+  <div class="r"><div class="s-eye">Pièces complémentaires</div><div class="s-head">Merch <em>DIVUS.</em></div></div>
+  <div class="merch-grid r">
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1556306535-38febf6cdbe4?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Bonnet DIVUS</div><div class="mc-price">150 €</div></div></div>
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Casquette DIVUS</div><div class="mc-price">180 €</div></div></div>
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Hoodie DIVUS</div><div class="mc-price">390 €</div></div></div>
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Écharpe mérinos</div><div class="mc-price">280 €</div></div></div>
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1603252109303-2751441dd157?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Set intime DIVUS</div><div class="mc-price">220 €</div></div></div>
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Chaussettes × 3</div><div class="mc-price">90 €</div></div></div>
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Tote canvas DIVUS</div><div class="mc-price">120 €</div></div></div>
+    <div class="mc"><div class="mc-iw"><img class="mc-img" src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400&q=80&fit=crop" alt=""></div><div class="mc-info"><div class="mc-name">Cartes postales</div><div class="mc-price">45 €</div></div></div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<div class="wl">
+  <div class="wl-head r">Le prochain <em>drop.</em></div>
+  <div class="wl-sub r">Liste prioritaire · Accès 24h avant · Aucune publicité</div>
+  <div class="wl-form r"><input class="wl-in" type="email" placeholder="votre@email.com"><button class="wl-btn">→</button></div>
+  <div class="wl-note r">Uniquement les drops à venir</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft">
+    <div><div class="ft-brand">DIVUS</div><div class="ft-tag">Maison de collection · Paris · Amsterdam</div><div class="ft-desc">Éditions limitées certifiées NFC.<br>Jamais un restock. Jamais.<br>Fabricatum in Gallia.</div></div>
+    <div><div class="ft-col-h">Boutique</div><a class="ft-l" href="#">T-shirts collector</a><a class="ft-l" href="#">Merch</a><a class="ft-l" href="#">Tous les drops</a><a class="ft-l" href="#">Certification NFC</a></div>
+    <div><div class="ft-col-h">Maison</div><a class="ft-l" href="#">La vision</a><a class="ft-l" href="#">L'atelier</a><a class="ft-l" href="#">Partenaires</a><a class="ft-l" href="#">Presse</a></div>
+    <div><div class="ft-col-h">Service</div><a class="ft-l" href="#">Livraison</a><a class="ft-l" href="#">Authentification</a><a class="ft-l" href="#">Contact</a><a class="ft-l" href="#">FAQ</a></div>
+  </div>
+  <div class="ft-bot">
+    <div class="ft-copy">© MMXXV DIVUS · Tous droits réservés</div>
+    <div class="ft-nfc"><div class="ft-nfc-dot"></div><div class="ft-nfc-txt">NFC · NTAG424 · Certified</div></div>
+  </div>
+</footer>
+
+</div><!-- /site -->
+
+<!-- MODAL -->
+<div class="mo" id="modal" onclick="mc(event)">
+  <div class="mo-panel">
+    <div class="mo-img"><img id="mi" src="" alt=""></div>
+    <div class="mo-body">
+      <button class="mo-close" onclick="cm()">✕ Fermer</button>
+      <div class="mo-eye" id="me"></div>
+      <div class="mo-name" id="mn"></div>
+      <div class="mo-serial" id="ms"></div>
+      <div class="mo-price" id="mp"></div>
+      <div class="mo-stk" id="mst"></div>
+      <div class="mo-szl">Taille</div>
+      <div class="mo-sizes"><button class="sz" onclick="ss(this)">XS</button><button class="sz" onclick="ss(this)">S</button><button class="sz a" onclick="ss(this)">M</button><button class="sz" onclick="ss(this)">L</button><button class="sz" onclick="ss(this)">XL</button></div>
+      <button class="mo-add" id="ma">Ajouter au sac</button>
+      <button class="mo-wish">Ajouter à la liste de souhaits</button>
+      <div class="mo-specs">
+        <div class="msp"><span class="msp-k">Certification</span><span class="msp-v">NFC NTAG424</span></div>
+        <div class="msp"><span class="msp-k">Matière</span><span class="msp-v">Coton Supima / Cachemire 400g</span></div>
+        <div class="msp"><span class="msp-k">Atelier</span><span class="msp-v">Haute couture · Paris</span></div>
+        <div class="msp"><span class="msp-k">Finitions</span><span class="msp-v">Main · Broderie haute densité</span></div>
+        <div class="msp"><span class="msp-k">Livraison</span><span class="msp-v">DHL Express 48h · Coffret bois</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* CURSOR */
+const cur=document.getElementById('cur'),curR=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function anim(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(anim);})();
+
+/* LANDING */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{document.getElementById('lbg').classList.add('show');},100);
+  setTimeout(()=>{document.getElementById('llogo').classList.add('show');},200);
+  setTimeout(()=>{document.getElementById('lsub').classList.add('show');},400);
+  setTimeout(()=>{document.getElementById('lcta').classList.add('show');},600);
+});
+
+function enterSite(){
+  const l=document.getElementById('landing');
+  const s=document.getElementById('site');
+  l.style.transition='opacity .7s';
+  l.style.opacity='0';
+  setTimeout(()=>{
+    l.style.display='none';
+    s.classList.add('show');
+    document.body.classList.remove('on-light');
+    const hi=document.getElementById('hero-img');
+    setTimeout(()=>hi.classList.add('zoomed'),100);
+    reveal();
+    window.addEventListener('scroll',()=>{navSc();reveal();});
+  },700);
+}
+
+function navSc(){
+  const nav=document.getElementById('nav');
+  if(window.scrollY>60)nav.classList.add('bg');
+  else nav.classList.remove('bg');
+}
+
+const rs=document.querySelectorAll('.r');
+function reveal(){rs.forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*.9)el.classList.add('v');});}
+
+function fp(f,tab){
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.pc').forEach(c=>{c.style.display=(f==='all'||c.dataset.s===f)?'':'none';});
+}
+
+function om(name,eye,serial,price,status,img){
+  document.getElementById('mi').src=img;
+  document.getElementById('mn').textContent=name;
+  document.getElementById('me').textContent=eye;
+  document.getElementById('ms').textContent=serial;
+  document.getElementById('mp').textContent=price+' €';
+  const st=document.getElementById('mst'),btn=document.getElementById('ma');
+  if(status==='soldout'){st.textContent='Épuisé — aucun restock possible';st.className='mo-stk s';btn.textContent='Épuisé';btn.className='mo-add sold';}
+  else{st.textContent='En stock · 312 restants';st.className='mo-stk a';btn.textContent='Ajouter au sac';btn.className='mo-add';}
+  const m=document.getElementById('modal');
+  m.style.display='flex';
+  setTimeout(()=>m.classList.add('vis'),10);
+  document.body.style.overflow='hidden';
+}
+function cm(){
+  const m=document.getElementById('modal');
+  m.classList.remove('vis');
+  setTimeout(()=>{m.style.display='none';document.body.style.overflow='';},400);
+}
+function mc(e){if(e.target===document.getElementById('modal'))cm();}
+function ss(b){document.querySelectorAll('.sz').forEach(x=>x.classList.remove('a'));b.classList.add('a');}
+</script>
+</body>
+</html>

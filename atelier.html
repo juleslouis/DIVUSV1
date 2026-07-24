@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVUS — L'Atelier</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#0A0A0A;
+  --white:#FAFAF8;
+  --border:rgba(255,255,255,0.07);
+  --border-light:rgba(0,0,0,0.08);
+  --serif:'Cormorant Garamond',serif;
+  --sans:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:none;}
+
+/* CURSOR */
+#cur{width:7px;height:7px;background:var(--white);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cur-r{width:34px;height:34px;border:1px solid rgba(255,255,255,0.25);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;background:rgba(10,10,10,0.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;text-decoration:none;cursor:none;transition:opacity .3s;}
+.nav-logo:hover{opacity:.5;}
+.nav-links{display:flex;gap:2.5rem;}
+.nl{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.35);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;position:relative;}
+.nl::after{content:'';position:absolute;bottom:-2px;left:0;right:100%;height:1px;background:var(--white);transition:right .35s;}
+.nl:hover{color:var(--white);}
+.nl:hover::after,.nl.active::after{right:0;}
+.nl.active{color:var(--white);}
+.nav-right{display:flex;gap:1.75rem;}
+.nr{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.3);text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;}
+.nr:hover{color:var(--white);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .85s,transform .85s;}
+.rv.on{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.35s;}.d4{transition-delay:.5s;}
+
+/* HERO ATELIER */
+.hero{height:100vh;position:relative;overflow:hidden;display:flex;align-items:flex-end;}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.35) contrast(1.1);transform:scale(1.04);transition:transform 10s ease;}
+.hero-img.z{transform:scale(1);}
+.hero-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.95) 0%,rgba(10,10,10,.1) 55%,transparent 100%);}
+.hero-content{position:relative;z-index:2;padding:0 3rem 5rem;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:flex-end;}
+.hero-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.55em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:1rem;opacity:0;transition:opacity .9s .3s;}
+.hero-eye.on{opacity:1;}
+.hero-title{font-family:var(--serif);font-weight:400;font-size:clamp(52px,8vw,105px);color:var(--white);letter-spacing:0.04em;line-height:1.02;opacity:0;transform:translateY(18px);transition:opacity .9s .5s,transform .9s .5s;}
+.hero-title.on{opacity:1;transform:translateY(0);}
+.hero-title em{font-style:italic;font-weight:300;}
+.hero-right{opacity:0;transition:opacity .9s .8s;}
+.hero-right.on{opacity:1;}
+.hero-quote{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(18px,2.2vw,26px);color:rgba(255,255,255,.4);line-height:1.8;border-left:1px solid rgba(255,255,255,.1);padding-left:2rem;}
+.hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.7rem;opacity:0;transition:opacity .9s 1.1s;}
+.hero-scroll.on{opacity:1;}
+.hs-line{width:1px;height:40px;background:rgba(255,255,255,.15);animation:lineAnim 2s infinite;}
+.hs-txt{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.6em;color:rgba(255,255,255,.18);text-transform:uppercase;}
+@keyframes lineAnim{0%{transform:scaleY(0);transform-origin:top;opacity:0}50%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);transform-origin:bottom;opacity:0}}
+
+/* MANIFESTE */
+.manifeste{padding:8rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:start;}
+.manifeste-left{}
+.man-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:1rem;}
+.man-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.5vw,56px);color:var(--white);letter-spacing:0.03em;line-height:1.07;}
+.man-title em{font-style:italic;font-weight:300;}
+.rule{height:1px;background:var(--border);margin:2.5rem 0;}
+.manifeste-right{}
+.man-body{font-family:var(--serif);font-weight:300;font-size:19px;color:rgba(255,255,255,.42);line-height:2;margin-bottom:2rem;}
+.man-body em{font-style:italic;color:rgba(255,255,255,.65);}
+.man-body + .man-body{margin-top:0;}
+
+/* FULL BLEED */
+.fb{position:relative;overflow:hidden;}
+.fb img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.35) contrast(1.08);}
+.fb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.9) 0%,rgba(10,10,10,.1) 55%,transparent 100%);}
+.fb-content{position:absolute;inset:0;z-index:2;display:flex;align-items:flex-end;padding:4rem 3rem;}
+.fb-row{width:100%;display:flex;justify-content:space-between;align-items:flex-end;}
+.fb-title{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(28px,4vw,52px);color:rgba(255,255,255,.7);}
+.fb-right{font-family:var(--sans);font-weight:200;font-size:9px;letter-spacing:0.48em;color:rgba(255,255,255,.2);text-transform:uppercase;text-align:right;line-height:2.4;}
+
+/* PROCESS */
+.process{background:var(--white);color:var(--black);padding:8rem 3rem;}
+.process-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(0,0,0,.3);text-transform:uppercase;margin-bottom:1rem;}
+.process-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.5vw,56px);color:var(--black);letter-spacing:0.03em;line-height:1.07;margin-bottom:5rem;}
+.process-title em{font-style:italic;font-weight:300;}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-light);}
+.step{background:var(--white);padding:2.5rem 2rem;position:relative;transition:background .35s;}
+.step:hover{background:#f5f5f3;}
+.step-num{font-family:var(--serif);font-style:italic;font-size:80px;color:rgba(0,0,0,.05);line-height:1;margin-bottom:1rem;transition:color .35s;}
+.step:hover .step-num{color:rgba(0,0,0,.08);}
+.step-title{font-family:var(--serif);font-weight:400;font-size:22px;color:var(--black);margin-bottom:.875rem;letter-spacing:0.02em;}
+.step-body{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.15em;color:rgba(0,0,0,.4);text-transform:uppercase;line-height:2;}
+
+/* SPECS COMPLETES */
+.specs-sec{background:var(--white);padding:0 3rem 8rem;}
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border-light);}
+.spec-cell{background:var(--white);padding:2.5rem;transition:background .3s;}
+.spec-cell:hover{background:#f5f5f3;}
+.spec-label{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.5em;color:rgba(0,0,0,.28);text-transform:uppercase;margin-bottom:.875rem;}
+.spec-value{font-family:var(--serif);font-weight:400;font-size:22px;color:var(--black);margin-bottom:.5rem;letter-spacing:0.02em;}
+.spec-value em{font-style:italic;font-weight:300;}
+.spec-detail{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.15em;color:rgba(0,0,0,.35);text-transform:uppercase;line-height:2;}
+
+/* GRILLE PHOTOS */
+.photo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:380px 380px;gap:1px;background:var(--border);}
+.pg-cell{position:relative;overflow:hidden;}
+.pg-cell img{width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.05);transition:transform 1s ease,filter .55s;}
+.pg-cell:hover img{transform:scale(1.04);filter:brightness(.65);}
+.pg-cell.tall{grid-row:span 2;}
+.pg-cap{position:absolute;bottom:0;left:0;right:0;padding:1.5rem;background:linear-gradient(to top,rgba(10,10,10,.72) 0%,transparent 100%);opacity:0;transition:opacity .4s;}
+.pg-cell:hover .pg-cap{opacity:1;}
+.pg-cap-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.45em;color:rgba(255,255,255,.6);text-transform:uppercase;}
+
+/* MATERIALS */
+.materials{background:var(--black);padding:8rem 3rem;}
+.mat-intro{display:grid;grid-template-columns:1fr 1fr;gap:8rem;margin-bottom:5rem;align-items:end;}
+.mat-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.5vw,56px);color:var(--white);letter-spacing:0.03em;line-height:1.07;}
+.mat-title em{font-style:italic;font-weight:300;}
+.mat-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.28em;color:rgba(255,255,255,.25);text-transform:uppercase;line-height:2.2;}
+.mat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+.mat-card{background:rgba(255,255,255,.02);padding:2.5rem;transition:background .35s;}
+.mat-card:hover{background:rgba(255,255,255,.04);}
+.mat-num{font-family:var(--serif);font-style:italic;font-size:48px;color:rgba(255,255,255,.06);line-height:1;margin-bottom:1.25rem;}
+.mat-name{font-family:var(--serif);font-weight:400;font-size:22px;color:rgba(255,255,255,.7);margin-bottom:.75rem;}
+.mat-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.18em;color:rgba(255,255,255,.22);text-transform:uppercase;line-height:2;}
+
+/* ATELIER INFO */
+.atelier-info{background:var(--black);padding:0 3rem 8rem;border-top:1px solid var(--border);}
+.ai-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+.ai-cell{background:rgba(255,255,255,.015);padding:2.5rem;}
+.ai-label{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.5em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:.875rem;}
+.ai-value{font-family:var(--serif);font-weight:400;font-size:20px;color:rgba(255,255,255,.6);letter-spacing:0.02em;margin-bottom:.5rem;}
+.ai-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.18em;color:rgba(255,255,255,.18);text-transform:uppercase;line-height:2;}
+
+/* CTAS BOTTOM */
+.ctas-sec{background:var(--white);padding:7rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:1px;background-color:var(--border-light);}
+.cta-block{background:var(--white);padding:4rem;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;transition:background .35s;cursor:none;}
+.cta-block:hover{background:#f5f5f3;}
+.cta-block.dark{background:var(--black);}
+.cta-block.dark:hover{background:#111;}
+.ctb-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:1rem;}
+.cta-block .ctb-eye{color:rgba(0,0,0,.3);}
+.cta-block.dark .ctb-eye{color:rgba(255,255,255,.22);}
+.ctb-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.5vw,44px);letter-spacing:0.03em;line-height:1.1;}
+.cta-block .ctb-title{color:var(--black);}
+.cta-block.dark .ctb-title{color:var(--white);}
+.ctb-title em{font-style:italic;font-weight:300;}
+.ctb-link{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;text-decoration:none;cursor:none;display:inline-flex;align-items:center;gap:.875rem;transition:gap .3s;}
+.cta-block .ctb-link{color:rgba(0,0,0,.4);}
+.cta-block.dark .ctb-link{color:rgba(255,255,255,.3);}
+.ctb-link:hover{gap:1.25rem;}
+
+/* WAITLIST */
+.wl{background:var(--black);padding:7rem 3rem;text-align:center;border-top:1px solid var(--border);}
+.wl-head{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,64px);color:var(--white);letter-spacing:0.03em;margin-bottom:.75rem;}
+.wl-head em{font-style:italic;font-weight:300;}
+.wl-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:2.75rem;}
+.wl-form{display:flex;max-width:380px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(255,255,255,.15);}
+.wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--white);}
+.wl-in::placeholder{color:rgba(255,255,255,.2);}
+.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--white);text-transform:uppercase;cursor:none;padding:12px 0;transition:opacity .3s;}
+.wl-btn:hover{opacity:.4;}
+.wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(255,255,255,.15);text-transform:uppercase;}
+
+/* FOOTER */
+footer{background:var(--black);padding:5rem 3rem 2.5rem;border-top:1px solid var(--border);}
+.ft-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;padding-bottom:4rem;border-bottom:1px solid var(--border);}
+.ft-brand{font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;margin-bottom:.75rem;}
+.ft-tag{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.12em;color:rgba(255,255,255,.13);line-height:2.4;text-transform:uppercase;}
+.ft-col-h{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
+.ft-l{display:block;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.13);text-transform:uppercase;margin-bottom:.875rem;text-decoration:none;cursor:none;transition:color .2s;}
+.ft-l:hover{color:rgba(255,255,255,.45);}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;}
+.ft-copy{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.1);text-transform:uppercase;}
+.ft-nfc{display:flex;align-items:center;gap:7px;}
+.ft-nfc-dot{width:4px;height:4px;background:var(--white);border-radius:50%;opacity:.15;}
+.ft-nfc-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.42em;color:rgba(255,255,255,.12);text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DIVUS</a>
+  <div class="nav-links">
+    <a class="nl" href="collection.html">Collection</a>
+    <a class="nl" href="merch.html">Merch</a>
+    <a class="nl active" href="atelier.html">L'atelier</a>
+    <a class="nl" href="certification.html">Certification</a>
+  </div>
+  <div class="nav-right">
+    <a class="nr" href="#">Compte</a>
+    <a class="nr" href="#">Sac</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <img class="hero-img" id="hi" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=90&fit=crop&crop=center" alt="Atelier Paris">
+  <div class="hero-grad"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-eye" id="he">L'atelier · Paris</div>
+      <div class="hero-title" id="ht">Fait à la main.<br><em>À Paris.</em></div>
+    </div>
+    <div class="hero-right" id="hr">
+      <div class="hero-quote">"Le vêtement n'est pas un produit. Il devient une archive. Une pièce de collection. Une trace."</div>
+    </div>
+  </div>
+  <div class="hero-scroll" id="hs">
+    <div class="hs-line"></div>
+    <div class="hs-txt">Défiler</div>
+  </div>
+</section>
+
+<!-- MANIFESTE -->
+<section class="manifeste">
+  <div class="manifeste-left rv">
+    <div class="man-eye">Le manifeste</div>
+    <div class="man-title">Le temps est le premier<br><em>artisan du luxe.</em></div>
+    <div class="rule"></div>
+  </div>
+  <div class="manifeste-right rv d2">
+    <p class="man-body">DIVUS ne fabrique pas simplement des vêtements. Elle <em>documente les objets qui ont marqué leur époque.</em> Chaque pièce est pensée comme une archive contemporaine, numérotée, certifiée, destinée à être transmise.</p>
+    <p class="man-body" style="margin-top:1.5rem;">Le luxe ne se démontre pas. <em>Il se possède en silence.</em> Une broderie de 4 heures sur un tissu de 400g — c'est ça, le luxe que nous fabriquons.</p>
+  </div>
+</section>
+
+<!-- FULL BLEED 1 -->
+<div class="fb rv" style="height:75vh;">
+  <img src="https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=1920&q=85&fit=crop" alt="Mains couture" style="object-position:center 25%;">
+  <div class="fb-overlay"></div>
+  <div class="fb-content">
+    <div class="fb-row">
+      <div class="fb-title">Confectionné à la main.</div>
+      <div class="fb-right">Atelier Paris · Haute couture<br>Savoir-faire transmis<br>Finitions individuelles</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="process-eye rv">Le processus</div>
+  <div class="process-title rv d1">De la matière<br><em>à l'archive.</em></div>
+  <div class="process-steps rv d2">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Sélection matière</div>
+      <div class="step-body">Coton Supima longues fibres sélectionné manuellement · Cachemire grade A mongol · Mélange 85/15 · Grammage 400g/m²</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Coupe & assemblage</div>
+      <div class="step-body">Patronage individuel · Coupe à la main · Coutures chevauchées renforcées · Fil surpiqûre sélectionné par le couturier</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Broderie</div>
+      <div class="step-body">Haute densité 15 fils/cm² · 4 à 6 heures par pièce · Finitions à la main · Stabilisateur thermocollant · Relief en volume</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Certification</div>
+      <div class="step-body">Puce NFC NTAG424 intégrée · Étiquette cuir gravée à chaud · Numéro de série individuel · Contrôle qualité final</div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs-sec">
+  <div class="specs-grid rv">
+    <div class="spec-cell">
+      <div class="spec-label">Matière principale</div>
+      <div class="spec-value">Coton Supima <em>85%</em></div>
+      <div class="spec-detail">Fibres extra-longues · Douceur supérieure · Résistance au pilling · Origine USA certifiée</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Matière seconde</div>
+      <div class="spec-value">Cachemire <em>Grade A · 15%</em></div>
+      <div class="spec-detail">Mongolie · Fibres 14 microns · Douceur cachemire dès le premier porter · Ne bouche pas</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Grammage</div>
+      <div class="spec-value"><em>400g</em> / m²</div>
+      <div class="spec-detail">Deux fois le grammage d'un t-shirt premium standard · Tombe parfaitement · Structure naturelle</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Traitement</div>
+      <div class="spec-value">Garment <em>washed</em></div>
+      <div class="spec-detail">Lavage enzymatique après confection · Toucher immédiatement doux · Pré-rétréci · Pas de surprises</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Broderie</div>
+      <div class="spec-value"><em>15 fils</em> / cm²</div>
+      <div class="spec-detail">Haute densité · 4 à 6 heures par pièce · Relief en volume · Finitions coupées à la main</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Étiquette</div>
+      <div class="spec-value">Cuir <em>pleine fleur</em></div>
+      <div class="spec-detail">Cuir veau · Gaufrage à chaud du numéro de série · Couture main au col · 5 × 3 cm</div>
+    </div>
+  </div>
+</section>
+
+<!-- GRILLE PHOTOS -->
+<div class="photo-grid rv">
+  <div class="pg-cell pg-tall">
+    <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=700&q=85&fit=crop" alt="Couture main">
+    <div class="pg-cap"><div class="pg-cap-txt">Assemblage · Main · Paris</div></div>
+  </div>
+  <div class="pg-cell">
+    <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=700&q=85&fit=crop" alt="Étiquette cuir">
+    <div class="pg-cap"><div class="pg-cap-txt">Étiquette cuir · N° de série gravé</div></div>
+  </div>
+  <div class="pg-cell">
+    <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=700&q=85&fit=crop" alt="Atelier lumière">
+    <div class="pg-cap"><div class="pg-cap-txt">Atelier · Lumière naturelle · Paris</div></div>
+  </div>
+  <div class="pg-cell">
+    <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=700&q=85&fit=crop" alt="Packaging">
+    <div class="pg-cap"><div class="pg-cap-txt">Packaging · Coffret bois laqué</div></div>
+  </div>
+</div>
+
+<!-- MATERIALS -->
+<section class="materials">
+  <div class="mat-intro rv">
+    <div>
+      <div style="font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:1rem;">Matériaux</div>
+      <div class="mat-title">DIVUS ne brille pas.<br><em>DIVUS possède de la matière.</em></div>
+    </div>
+    <div class="mat-sub rv d2">Aucune finition miroir<br>Aucune dorure brillante<br>Le luxe s'exprime par la texture<br>Par le poids dans les mains<br>Par la durée dans le temps</div>
+  </div>
+  <div class="mat-grid rv d2">
+    <div class="mat-card">
+      <div class="mat-num">I</div>
+      <div class="mat-name">Coton / Cachemire</div>
+      <div class="mat-desc">Tissu principal · 85/15 · 400g/m² · Mélange propriétaire · Sensation unique au toucher</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">II</div>
+      <div class="mat-name">Cuir pleine fleur</div>
+      <div class="mat-desc">Étiquette intérieure · Cuir veau · Gaufrage à chaud · Numérotation individuelle gravée</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">III</div>
+      <div class="mat-name">Fil de broderie</div>
+      <div class="mat-desc">Haute densité · Résistance aux lavages · Couleurs stables · Finitions coupées à la main</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">IV</div>
+      <div class="mat-name">Bois laqué</div>
+      <div class="mat-desc">Coffret packaging · MDF laqué noir · Gravure laser n° de série · Charnières métal</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">V</div>
+      <div class="mat-name">Silicone NTAG424</div>
+      <div class="mat-desc">Puce NFC encapsulée · Résistance eau IP67 · Compatible lavage machine 40° · Non clonable</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">VI</div>
+      <div class="mat-name">Papier coton 600g</div>
+      <div class="mat-desc">Certificat d'authenticité · Gaufrage profond · Signé par le couturier · Destiné à traverser le temps</div>
+    </div>
+  </div>
+</section>
+
+<!-- ATELIER INFO -->
+<section class="atelier-info rv">
+  <div style="padding:5rem 0 3rem;">
+    <div style="font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:1rem;">L'atelier en chiffres</div>
+    <div style="font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.5vw,44px);color:var(--white);letter-spacing:0.03em;">Ce que chaque pièce<br><em style="font-style:italic;font-weight:300;">représente vraiment.</em></div>
+  </div>
+  <div class="ai-grid">
+    <div class="ai-cell">
+      <div class="ai-label">Temps de fabrication</div>
+      <div class="ai-value">4 à 6 heures</div>
+      <div class="ai-note">Par pièce · Broderie incluse · Finitions main · Contrôle qualité</div>
+    </div>
+    <div class="ai-cell">
+      <div class="ai-label">Intervenants</div>
+      <div class="ai-value">3 à 4 mains</div>
+      <div class="ai-note">Couturier · Brodeur · Contrôleur qualité · Signature individuelle</div>
+    </div>
+    <div class="ai-cell">
+      <div class="ai-label">Localisation</div>
+      <div class="ai-value">Paris, France</div>
+      <div class="ai-note">Atelier haute couture · Fabricatum in Gallia · Certifié origine</div>
+    </div>
+    <div class="ai-cell">
+      <div class="ai-label">Référence savoir-faire</div>
+      <div class="ai-value">Haute couture</div>
+      <div class="ai-note">Même niveau de finition que les grandes maisons parisiennes · Standards stricts</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTAS BOTTOM -->
+<div class="ctas-sec rv">
+  <a class="cta-block" href="collection.html">
+    <div>
+      <div class="ctb-eye">Pièces maîtresses</div>
+      <div class="ctb-title">Voir la<br><em>collection.</em></div>
+    </div>
+    <span class="ctb-link">Découvrir les drops →</span>
+  </a>
+  <a class="cta-block dark" href="certification.html">
+    <div>
+      <div class="ctb-eye">Technologie</div>
+      <div class="ctb-title" style="color:var(--white);">La<br><em>certification.</em></div>
+    </div>
+    <span class="ctb-link">NFC NTAG424 →</span>
+  </a>
+</div>
+
+<!-- WAITLIST -->
+<div class="wl rv">
+  <div class="wl-head">Le prochain <em>drop.</em></div>
+  <div class="wl-sub">Liste prioritaire · Accès 24h avant · Aucune publicité</div>
+  <div class="wl-form">
+    <input class="wl-in" type="email" placeholder="votre@email.com">
+    <button class="wl-btn">→</button>
+  </div>
+  <div class="wl-note">Uniquement les drops à venir</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div>
+      <div class="ft-brand">DIVUS</div>
+      <div class="ft-tag">Maison de collection · Paris · Amsterdam</div>
+      <div class="ft-desc">Éditions limitées certifiées NFC.<br>Jamais un restock. Jamais.<br>Fabricatum in Gallia · MMXXV</div>
+    </div>
+    <div>
+      <div class="ft-col-h">Boutique</div>
+      <a class="ft-l" href="collection.html">T-shirts collector</a>
+      <a class="ft-l" href="merch.html">Merch</a>
+      <a class="ft-l" href="collection.html">Tous les drops</a>
+      <a class="ft-l" href="certification.html">Certification NFC</a>
+    </div>
+    <div>
+      <div class="ft-col-h">Maison</div>
+      <a class="ft-l" href="#">La vision</a>
+      <a class="ft-l" href="atelier.html">L'atelier</a>
+      <a class="ft-l" href="#">Partenaires</a>
+      <a class="ft-l" href="#">Presse</a>
+    </div>
+    <div>
+      <div class="ft-col-h">Service</div>
+      <a class="ft-l" href="#">Livraison</a>
+      <a class="ft-l" href="certification.html">Authentification</a>
+      <a class="ft-l" href="#">Contact</a>
+      <a class="ft-l" href="#">FAQ</a>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <div class="ft-copy">© MMXXV DIVUS · Tous droits réservés</div>
+    <div class="ft-nfc"><div class="ft-nfc-dot"></div><div class="ft-nfc-txt">NFC · NTAG424 · Certified</div></div>
+  </div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),cr=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(a);})();
+
+window.addEventListener('load',()=>{
+  const hi=document.getElementById('hi');
+  setTimeout(()=>hi.classList.add('z'),80);
+  setTimeout(()=>document.getElementById('he').classList.add('on'),200);
+  setTimeout(()=>document.getElementById('ht').classList.add('on'),400);
+  setTimeout(()=>document.getElementById('hr').classList.add('on'),700);
+  setTimeout(()=>document.getElementById('hs').classList.add('on'),1000);
+  reveal();
+});
+
+const rvs=document.querySelectorAll('.rv');
+function reveal(){rvs.forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*.9)el.classList.add('on');});}
+window.addEventListener('scroll',reveal);
+</script>
+</body>
+</html>

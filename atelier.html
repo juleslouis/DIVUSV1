@@ -3,356 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIVUS — Maison de Collection</title>
+<title>DIVUS — L'Atelier</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --black:#0A0A0A;
   --white:#FAFAF8;
-  --gray:#666;
   --border:rgba(255,255,255,0.07);
   --border-light:rgba(0,0,0,0.08);
   --serif:'Cormorant Garamond',serif;
   --sans:'Inter',sans-serif;
 }
 html{scroll-behavior:smooth;overflow-x:hidden;}
-body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:auto;overflow-x:hidden;}
+body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
 
-/* ── NAV ── */
-.nav{
-  position:fixed;top:0;left:0;right:0;z-index:500;
-  height:58px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 3rem;
-  transition:background .5s,border-color .5s;
-}
-.nav.scrolled{background:rgba(10,10,10,0.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
-.nav-logo{
-  font-family:var(--serif);font-weight:500;font-size:21px;
-  letter-spacing:0.38em;color:var(--white);text-transform:uppercase;
-  text-decoration:none;transition:opacity .3s;
-}
-.nav-logo:hover{opacity:.55;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;background:rgba(10,10,10,0.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;text-decoration:none;transition:opacity .3s;}
+.nav-logo:hover{opacity:.5;}
 .nav-links{display:flex;gap:2.5rem;}
-.nl{
-  font-family:var(--sans);font-weight:300;font-size:10px;
-  letter-spacing:0.3em;color:rgba(255,255,255,0.45);
-  text-transform:uppercase;text-decoration:none;
-  transition:color .25s;position:relative;
-}
+.nl{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.35);text-transform:uppercase;text-decoration:none;transition:color .25s;position:relative;}
 .nl::after{content:'';position:absolute;bottom:-2px;left:0;right:100%;height:1px;background:var(--white);transition:right .35s;}
 .nl:hover{color:var(--white);}
-.nl:hover::after{right:0;}
+.nl:hover::after,.nl.active::after{right:0;}
+.nl.active{color:var(--white);}
 .nav-right{display:flex;gap:1.75rem;}
-.nr{
-  font-family:var(--sans);font-weight:300;font-size:10px;
-  letter-spacing:0.3em;color:rgba(255,255,255,0.4);
-  text-transform:uppercase;text-decoration:none;transition:color .25s;
-}
+.nr{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,0.3);text-transform:uppercase;text-decoration:none;transition:color .25s;}
 .nr:hover{color:var(--white);}
 
-/* ── LANDING ── */
-.landing{
-  position:fixed;inset:0;z-index:900;
-  background:var(--black);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity .8s;
-}
-.landing.out{opacity:0;pointer-events:none;}
-.land-bg{
-  position:absolute;inset:0;
-  background:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=85&fit=crop&crop=center') center 35%/cover;
-  filter:brightness(.18) contrast(1.1);
-  opacity:0;transition:opacity 2.2s;
-}
-.land-bg.on{opacity:1;}
-.land-logo{
-  font-family:var(--serif);font-weight:500;
-  font-size:clamp(96px,16vw,210px);
-  letter-spacing:0.3em;color:var(--white);
-  text-transform:uppercase;line-height:1;
-  position:relative;z-index:2;
-  opacity:0;transform:translateY(14px);
-  transition:opacity 1.1s .5s,transform 1.1s .5s;
-}
-.land-logo.on{opacity:1;transform:translateY(0);}
-.land-sub{
-  font-family:var(--sans);font-weight:200;font-size:10px;
-  letter-spacing:0.6em;color:rgba(255,255,255,0.28);
-  text-transform:uppercase;margin-top:1.75rem;
-  position:relative;z-index:2;
-  opacity:0;transition:opacity .9s 1.2s;
-}
-.land-sub.on{opacity:1;}
-/* Hint souris */
-.land-hint{
-  position:absolute;bottom:3.5rem;left:50%;transform:translateX(-50%);
-  z-index:2;display:flex;flex-direction:column;align-items:center;gap:.75rem;
-  opacity:0;transition:opacity .8s 1.8s;pointer-events:none;
-}
-.land-hint.on{opacity:1;}
-.land-hint-txt{
-  font-family:var(--sans);font-weight:200;font-size:9px;
-  letter-spacing:0.6em;color:rgba(255,255,255,0.2);text-transform:uppercase;
-}
-.land-hint-mouse{
-  width:22px;height:34px;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:12px;
-  display:flex;align-items:flex-start;justify-content:center;
-  padding-top:6px;
-}
-.land-hint-wheel{
-  width:2px;height:6px;
-  background:rgba(255,255,255,.3);
-  border-radius:2px;
-  animation:wheelAnim 1.8s 2s infinite;
-}
-@keyframes wheelAnim{
-  0%{transform:translateY(0);opacity:.4;}
-  50%{transform:translateY(6px);opacity:.9;}
-  100%{transform:translateY(0);opacity:.4;}
-}
-/* Reveal layer — recouvre le site et se lève avec la souris */
-.land-reveal{
-  position:fixed;inset:0;z-index:850;
-  background:var(--black);
-  transform-origin:top;
-  transform:scaleY(1);
-  transition:transform .0s;
-  pointer-events:none;
-}
-@keyframes barAnim{
-  0%{transform:scaleY(0);transform-origin:top;opacity:0;}
-  50%{transform:scaleY(1);opacity:1;}
-  100%{transform:scaleY(1);transform-origin:bottom;opacity:0;}
-}
+/* REVEAL */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .85s,transform .85s;}
+.rv.on{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.35s;}.d4{transition-delay:.5s;}
 
-/* ── HERO ── */
-.hero{
-  height:100vh;position:relative;overflow:hidden;background:var(--black);
-}
-.hero-img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;object-position:center 35%;
-  filter:brightness(.42) contrast(1.08);
-  transform:scale(1.07);transition:transform 11s ease;
-}
+/* HERO ATELIER */
+.hero{height:100vh;position:relative;overflow:hidden;display:flex;align-items:flex-end;}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.35) contrast(1.1);transform:scale(1.04);transition:transform 10s ease;}
 .hero-img.z{transform:scale(1);}
-.hero-grad{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(10,10,10,.92) 0%,rgba(10,10,10,.15) 55%,transparent 100%);
-}
-.hero-content{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:5rem 3rem;
-  display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:flex-end;
-}
-.hero-title{
-  font-family:var(--serif);font-weight:400;
-  font-size:clamp(44px,7vw,92px);
-  color:var(--white);letter-spacing:0.03em;line-height:1.06;
-  opacity:0;transform:translateY(20px);
-  transition:opacity .9s .2s,transform .9s .2s;
-}
+.hero-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.95) 0%,rgba(10,10,10,.1) 55%,transparent 100%);}
+.hero-content{position:relative;z-index:2;padding:0 3rem 5rem;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:flex-end;}
+.hero-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.55em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:1rem;opacity:0;transition:opacity .9s .3s;}
+.hero-eye.on{opacity:1;}
+.hero-title{font-family:var(--serif);font-weight:400;font-size:clamp(52px,8vw,105px);color:var(--white);letter-spacing:0.04em;line-height:1.02;opacity:0;transform:translateY(18px);transition:opacity .9s .5s,transform .9s .5s;}
 .hero-title.on{opacity:1;transform:translateY(0);}
 .hero-title em{font-style:italic;font-weight:300;}
-.hero-actions{
-  margin-top:2.5rem;display:flex;align-items:center;gap:1.5rem;
-  opacity:0;transition:opacity .9s .5s;
-}
-.hero-actions.on{opacity:1;}
-.btn-primary{
-  display:inline-flex;align-items:center;gap:.875rem;
-  font-family:var(--sans);font-weight:300;font-size:10px;
-  letter-spacing:0.35em;color:var(--white);text-transform:uppercase;
-  text-decoration:none;border:1px solid rgba(255,255,255,0.22);
-  padding:14px 28px;position:relative;overflow:hidden;transition:color .38s;
-}
-.btn-primary::before{content:'';position:absolute;inset:0;background:var(--white);transform:scaleX(0);transform-origin:left;transition:transform .38s;}
-.btn-primary:hover::before{transform:scaleX(1);}
-.btn-primary:hover{color:var(--black);}
-.btn-primary span,.btn-arr{position:relative;z-index:1;}
-.btn-arr{transition:transform .38s;}
-.btn-primary:hover .btn-arr{transform:translateX(4px);}
-.btn-ghost{
-  font-family:var(--sans);font-weight:300;font-size:10px;
-  letter-spacing:0.35em;color:rgba(255,255,255,.35);
-  text-transform:uppercase;text-decoration:none;transition:color .25s;
-}
-.btn-ghost:hover{color:var(--white);}
-.hero-right{text-align:right;}
-.hero-serial-l{
-  font-family:var(--sans);font-weight:200;font-size:9px;
-  letter-spacing:0.5em;color:rgba(255,255,255,.2);
-  text-transform:uppercase;margin-bottom:.35rem;
-}
-.hero-serial-v{
-  font-family:var(--serif);font-style:italic;
-  font-size:clamp(52px,7vw,88px);
-  color:rgba(255,255,255,.06);line-height:1;
-}
-.hero-serial-s{
-  font-family:var(--sans);font-weight:200;font-size:8px;
-  letter-spacing:0.45em;color:rgba(255,255,255,.15);
-  text-transform:uppercase;margin-top:.4rem;line-height:2;
-}
-.hero-scroll{
-  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
-  z-index:2;display:flex;flex-direction:column;align-items:center;gap:.7rem;
-  opacity:0;transition:opacity .9s 1s;
-}
+.hero-right{opacity:0;transition:opacity .9s .8s;}
+.hero-right.on{opacity:1;}
+.hero-quote{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(18px,2.2vw,26px);color:rgba(255,255,255,.4);line-height:1.8;border-left:1px solid rgba(255,255,255,.1);padding-left:2rem;}
+.hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.7rem;opacity:0;transition:opacity .9s 1.1s;}
 .hero-scroll.on{opacity:1;}
-.hero-scroll-line{width:1px;height:40px;background:rgba(255,255,255,.15);animation:barAnim 2s infinite;}
-.hero-scroll-txt{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.6em;color:rgba(255,255,255,.2);text-transform:uppercase;}
+.hs-line{width:1px;height:40px;background:rgba(255,255,255,.15);animation:lineAnim 2s infinite;}
+.hs-txt{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.6em;color:rgba(255,255,255,.18);text-transform:uppercase;}
+@keyframes lineAnim{0%{transform:scaleY(0);transform-origin:top;opacity:0}50%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);transform-origin:bottom;opacity:0}}
 
-/* ── BAND ── */
-.band{background:var(--white);padding:.85rem 0;overflow:hidden;}
-.band-track{display:flex;white-space:nowrap;animation:marquee 26s linear infinite;}
-.bi{display:flex;align-items:center;gap:2.5rem;padding:0 2.5rem;flex-shrink:0;}
-.bt{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.45em;color:rgba(10,10,10,0.4);text-transform:uppercase;}
-.bs{font-size:12px;color:rgba(10,10,10,.18);font-family:var(--serif);}
-@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* MANIFESTE */
+.manifeste{padding:8rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:start;}
+.manifeste-left{}
+.man-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:1rem;}
+.man-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.5vw,56px);color:var(--white);letter-spacing:0.03em;line-height:1.07;}
+.man-title em{font-style:italic;font-weight:300;}
+.rule{height:1px;background:var(--border);margin:2.5rem 0;}
+.manifeste-right{}
+.man-body{font-family:var(--serif);font-weight:300;font-size:19px;color:rgba(255,255,255,.42);line-height:2;margin-bottom:2rem;}
+.man-body em{font-style:italic;color:rgba(255,255,255,.65);}
+.man-body + .man-body{margin-top:0;}
 
-/* ── REVEAL ── */
-.rv{opacity:0;transform:translateY(28px);transition:opacity .85s,transform .85s;}
-.rv.on{opacity:1;transform:translateY(0);}
-.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
-
-/* ── CONCEPT ── */
-.concept{display:grid;grid-template-columns:1fr 1fr;min-height:88vh;}
-.concept-img{position:relative;overflow:hidden;background:#0d0d0d;}
-.c-img{width:100%;height:100%;object-fit:cover;filter:brightness(.52) contrast(1.05);transform:scale(1.04);transition:transform 1.1s ease;}
-.concept-img:hover .c-img{transform:scale(1);}
-.c-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.65) 0%,transparent 55%);}
-.c-badge{
-  position:absolute;bottom:2rem;left:2rem;
-  display:flex;align-items:center;gap:8px;
-  border:1px solid rgba(255,255,255,.1);
-  padding:8px 14px;background:rgba(10,10,10,.55);backdrop-filter:blur(10px);
-}
-.c-badge-dot{width:5px;height:5px;background:var(--white);border-radius:50%;opacity:.5;animation:pulse 2.2s infinite;}
-@keyframes pulse{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:.12;transform:scale(.7);}}
-.c-badge-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.42em;color:rgba(255,255,255,.45);text-transform:uppercase;}
-.concept-copy{background:var(--white);color:var(--black);padding:6rem 5rem;display:flex;flex-direction:column;justify-content:center;}
-.s-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(10,10,10,.35);text-transform:uppercase;margin-bottom:.875rem;}
-.s-eye-white{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.28);text-transform:uppercase;margin-bottom:.875rem;}
-.s-head{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.5vw,60px);letter-spacing:0.03em;line-height:1.07;}
-.s-head em{font-style:italic;font-weight:300;}
-.rule{height:1px;background:var(--border-light);margin:2.25rem 0;}
-.rule-white{height:1px;background:var(--border);margin:2.25rem 0;}
-.c-body{font-family:var(--serif);font-weight:400;font-size:19px;color:#1c1c1c;line-height:1.95;margin-bottom:2.75rem;}
-.c-body em{font-style:italic;}
-.pillars{display:flex;flex-direction:column;}
-.pillar{display:flex;gap:1.5rem;padding:1.2rem 0;border-bottom:1px solid var(--border-light);align-items:flex-start;}
-.pillar:first-child{border-top:1px solid var(--border-light);}
-.p-n{font-family:var(--serif);font-style:italic;font-size:21px;color:rgba(10,10,10,.18);flex-shrink:0;min-width:26px;line-height:1.3;}
-.p-t{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.18em;color:rgba(10,10,10,.45);text-transform:uppercase;line-height:2;padding-top:2px;}
-
-/* ── FULL BLEED ── */
+/* FULL BLEED */
 .fb{position:relative;overflow:hidden;}
-.fb img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.38) contrast(1.08);}
-.fb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.88) 0%,rgba(10,10,10,.1) 55%,transparent 100%);}
+.fb img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.35) contrast(1.08);}
+.fb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.9) 0%,rgba(10,10,10,.1) 55%,transparent 100%);}
 .fb-content{position:absolute;inset:0;z-index:2;display:flex;align-items:flex-end;padding:4rem 3rem;}
 .fb-row{width:100%;display:flex;justify-content:space-between;align-items:flex-end;}
-.fb-title{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(28px,4vw,52px);color:rgba(255,255,255,.75);}
-.fb-right{font-family:var(--sans);font-weight:200;font-size:9px;letter-spacing:0.48em;color:rgba(255,255,255,.22);text-transform:uppercase;text-align:right;line-height:2.3;}
+.fb-title{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(28px,4vw,52px);color:rgba(255,255,255,.7);}
+.fb-right{font-family:var(--sans);font-weight:200;font-size:9px;letter-spacing:0.48em;color:rgba(255,255,255,.2);text-transform:uppercase;text-align:right;line-height:2.4;}
 
-/* ── TEASER COLLECTION ── */
-.teaser{background:var(--white);padding:6rem 3rem;}
-.teaser-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;}
-.see-all{
-  font-family:var(--sans);font-weight:300;font-size:10px;
-  letter-spacing:0.35em;color:rgba(10,10,10,.4);text-transform:uppercase;
-  text-decoration:none;transition:color .25s;
-  display:flex;align-items:center;gap:.75rem;
-}
-.see-all:hover{color:var(--black);}
-.teaser-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-light);}
-.tc{background:var(--white);position:relative;overflow:hidden;}
-.tc-iw{aspect-ratio:3/4;overflow:hidden;position:relative;}
-.tc-img{width:100%;height:100%;object-fit:cover;filter:brightness(.88);transition:transform .9s cubic-bezier(.25,.46,.45,.94),filter .55s;}
-.tc:hover .tc-img{transform:scale(1.05);filter:brightness(.95);}
-.tc-badge{position:absolute;font-family:var(--sans);font-weight:400;font-size:8px;letter-spacing:0.35em;text-transform:uppercase;padding:4px 10px;}
-.tc-badge.new{background:var(--black);color:var(--white);top:1rem;left:1rem;}
-.tc-badge.sold{background:transparent;border:1px solid rgba(10,10,10,.18);color:rgba(10,10,10,.45);bottom:1rem;left:1rem;}
-.tc-hover{
-  position:absolute;bottom:0;left:0;right:0;
-  background:var(--black);color:var(--white);
-  font-family:var(--sans);font-weight:300;font-size:9px;
-  letter-spacing:0.35em;text-transform:uppercase;
-  padding:14px;text-align:center;
-  transform:translateY(100%);transition:transform .32s cubic-bezier(.25,.46,.45,.94);
-}
-.tc:hover .tc-hover{transform:translateY(0);}
-.tc-info{padding:1.5rem 1.25rem 1.875rem;background:var(--white);}
-.tc-name{font-family:var(--serif);font-weight:400;font-size:20px;color:var(--black);margin-bottom:4px;letter-spacing:0.02em;}
-.tc-meta{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(10,10,10,.35);text-transform:uppercase;margin-bottom:1rem;}
-.tc-row{display:flex;justify-content:space-between;align-items:baseline;}
-.tc-price{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--black);}
-.tc-stk{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;}
-.tc-stk.live{color:var(--black);}
-.tc-stk.out{color:rgba(10,10,10,.3);}
+/* PROCESS */
+.process{background:var(--white);color:var(--black);padding:8rem 3rem;}
+.process-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(0,0,0,.3);text-transform:uppercase;margin-bottom:1rem;}
+.process-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.5vw,56px);color:var(--black);letter-spacing:0.03em;line-height:1.07;margin-bottom:5rem;}
+.process-title em{font-style:italic;font-weight:300;}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-light);}
+.step{background:var(--white);padding:2.5rem 2rem;position:relative;transition:background .35s;}
+.step:hover{background:#f5f5f3;}
+.step-num{font-family:var(--serif);font-style:italic;font-size:80px;color:rgba(0,0,0,.05);line-height:1;margin-bottom:1rem;transition:color .35s;}
+.step:hover .step-num{color:rgba(0,0,0,.08);}
+.step-title{font-family:var(--serif);font-weight:400;font-size:22px;color:var(--black);margin-bottom:.875rem;letter-spacing:0.02em;}
+.step-body{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.15em;color:rgba(0,0,0,.4);text-transform:uppercase;line-height:2;}
 
-/* ── ATELIER TEASER ── */
-.atelier{display:grid;grid-template-columns:1fr 1fr;min-height:82vh;}
-.at-copy{background:var(--black);padding:6rem 5rem;display:flex;flex-direction:column;justify-content:center;}
-.at-body{font-family:var(--serif);font-weight:300;font-size:19px;color:rgba(255,255,255,.38);line-height:2;margin:2.25rem 0;}
-.spec-list{display:flex;flex-direction:column;}
-.spec{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid var(--border);}
-.spec:first-child{border-top:1px solid var(--border);}
-.spec-k{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.4em;color:rgba(255,255,255,.18);text-transform:uppercase;}
-.spec-v{font-family:var(--serif);font-size:15px;color:rgba(255,255,255,.5);letter-spacing:0.03em;}
-.at-link{
-  margin-top:2.5rem;
-  font-family:var(--sans);font-weight:300;font-size:10px;
-  letter-spacing:0.35em;color:rgba(255,255,255,.35);
-  text-transform:uppercase;text-decoration:none;
-  display:inline-flex;align-items:center;gap:.875rem;transition:color .25s;
-}
-.at-link:hover{color:var(--white);}
-.at-img-col{position:relative;overflow:hidden;}
-.at-img{width:100%;height:100%;object-fit:cover;filter:brightness(.52) contrast(1.05);transition:transform 1.2s ease;}
-.at-img-col:hover .at-img{transform:scale(1.03);}
+/* SPECS COMPLETES */
+.specs-sec{background:var(--white);padding:0 3rem 8rem;}
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border-light);}
+.spec-cell{background:var(--white);padding:2.5rem;transition:background .3s;}
+.spec-cell:hover{background:#f5f5f3;}
+.spec-label{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.5em;color:rgba(0,0,0,.28);text-transform:uppercase;margin-bottom:.875rem;}
+.spec-value{font-family:var(--serif);font-weight:400;font-size:22px;color:var(--black);margin-bottom:.5rem;letter-spacing:0.02em;}
+.spec-value em{font-style:italic;font-weight:300;}
+.spec-detail{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.15em;color:rgba(0,0,0,.35);text-transform:uppercase;line-height:2;}
 
-/* ── NFC STRIP ── */
-.nfc-strip{
-  background:var(--black);border-top:1px solid var(--border);
-  padding:4rem 3rem;
-  display:flex;justify-content:space-between;align-items:center;gap:3rem;
-}
-.nfc-strip-left{display:flex;align-items:center;gap:2rem;}
-.nfc-dot-anim{width:8px;height:8px;background:var(--white);border-radius:50%;opacity:.35;animation:pulse 2.2s infinite;}
-.nfc-strip-title{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--white);}
-.nfc-strip-sub{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-top:4px;}
-.nfc-strip-right{
-  font-family:var(--sans);font-weight:300;font-size:9px;
-  letter-spacing:0.38em;color:rgba(255,255,255,.22);
-  text-transform:uppercase;text-align:right;line-height:2.3;
-}
-.nfc-strip-cta{
-  font-family:var(--sans);font-weight:300;font-size:10px;
-  letter-spacing:0.35em;color:rgba(255,255,255,.4);
-  text-transform:uppercase;text-decoration:none;
-  border:1px solid rgba(255,255,255,.12);padding:12px 22px;
-  transition:all .3s;white-space:nowrap;flex-shrink:0;
-}
-.nfc-strip-cta:hover{color:var(--white);border-color:rgba(255,255,255,.35);}
+/* GRILLE PHOTOS */
+.photo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:380px 380px;gap:1px;background:var(--border);}
+.pg-cell{position:relative;overflow:hidden;}
+.pg-cell img{width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.05);transition:transform 1s ease,filter .55s;}
+.pg-cell:hover img{transform:scale(1.04);filter:brightness(.65);}
+.pg-cell.tall{grid-row:span 2;}
+.pg-cap{position:absolute;bottom:0;left:0;right:0;padding:1.5rem;background:linear-gradient(to top,rgba(10,10,10,.72) 0%,transparent 100%);opacity:0;transition:opacity .4s;}
+.pg-cell:hover .pg-cap{opacity:1;}
+.pg-cap-txt{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.45em;color:rgba(255,255,255,.6);text-transform:uppercase;}
 
-/* ── WAITLIST ── */
-.wl{background:var(--white);padding:7rem 3rem;text-align:center;}
-.wl-head{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,68px);color:var(--black);letter-spacing:0.03em;margin-bottom:.75rem;}
+/* MATERIALS */
+.materials{background:var(--black);padding:8rem 3rem;}
+.mat-intro{display:grid;grid-template-columns:1fr 1fr;gap:8rem;margin-bottom:5rem;align-items:end;}
+.mat-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.5vw,56px);color:var(--white);letter-spacing:0.03em;line-height:1.07;}
+.mat-title em{font-style:italic;font-weight:300;}
+.mat-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.28em;color:rgba(255,255,255,.25);text-transform:uppercase;line-height:2.2;}
+.mat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+.mat-card{background:rgba(255,255,255,.02);padding:2.5rem;transition:background .35s;}
+.mat-card:hover{background:rgba(255,255,255,.04);}
+.mat-num{font-family:var(--serif);font-style:italic;font-size:48px;color:rgba(255,255,255,.06);line-height:1;margin-bottom:1.25rem;}
+.mat-name{font-family:var(--serif);font-weight:400;font-size:22px;color:rgba(255,255,255,.7);margin-bottom:.75rem;}
+.mat-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.18em;color:rgba(255,255,255,.22);text-transform:uppercase;line-height:2;}
+
+/* ATELIER INFO */
+.atelier-info{background:var(--black);padding:0 3rem 8rem;border-top:1px solid var(--border);}
+.ai-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+.ai-cell{background:rgba(255,255,255,.015);padding:2.5rem;}
+.ai-label{font-family:var(--sans);font-weight:300;font-size:8px;letter-spacing:0.5em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:.875rem;}
+.ai-value{font-family:var(--serif);font-weight:400;font-size:20px;color:rgba(255,255,255,.6);letter-spacing:0.02em;margin-bottom:.5rem;}
+.ai-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.18em;color:rgba(255,255,255,.18);text-transform:uppercase;line-height:2;}
+
+/* CTAS BOTTOM */
+.ctas-sec{background:var(--white);padding:7rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:1px;background-color:var(--border-light);}
+.cta-block{background:var(--white);padding:4rem;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;transition:background .35s;}
+.cta-block:hover{background:#f5f5f3;}
+.cta-block.dark{background:var(--black);}
+.cta-block.dark:hover{background:#111;}
+.ctb-eye{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:1rem;}
+.cta-block .ctb-eye{color:rgba(0,0,0,.3);}
+.cta-block.dark .ctb-eye{color:rgba(255,255,255,.22);}
+.ctb-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.5vw,44px);letter-spacing:0.03em;line-height:1.1;}
+.cta-block .ctb-title{color:var(--black);}
+.cta-block.dark .ctb-title{color:var(--white);}
+.ctb-title em{font-style:italic;font-weight:300;}
+.ctb-link{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:.875rem;transition:gap .3s;}
+.cta-block .ctb-link{color:rgba(0,0,0,.4);}
+.cta-block.dark .ctb-link{color:rgba(255,255,255,.3);}
+.ctb-link:hover{gap:1.25rem;}
+
+/* WAITLIST */
+.wl{background:var(--black);padding:7rem 3rem;text-align:center;border-top:1px solid var(--border);}
+.wl-head{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,64px);color:var(--white);letter-spacing:0.03em;margin-bottom:.75rem;}
 .wl-head em{font-style:italic;font-weight:300;}
-.wl-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(10,10,10,.32);text-transform:uppercase;margin-bottom:3rem;}
-.wl-form{display:flex;max-width:400px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(10,10,10,.18);}
-.wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--black);}
-.wl-in::placeholder{color:rgba(10,10,10,.22);}
-.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--black);text-transform:uppercase;padding:12px 0;transition:opacity .3s;}
+.wl-sub{font-family:var(--sans);font-weight:300;font-size:10px;letter-spacing:0.45em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:2.75rem;}
+.wl-form{display:flex;max-width:380px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(255,255,255,.15);}
+.wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--white);}
+.wl-in::placeholder{color:rgba(255,255,255,.2);}
+.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--white);text-transform:uppercase;padding:12px 0;transition:opacity .3s;}
 .wl-btn:hover{opacity:.4;}
-.wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(10,10,10,.18);text-transform:uppercase;}
+.wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(255,255,255,.15);text-transform:uppercase;}
 
-/* ── FOOTER ── */
-footer{background:var(--black);padding:5rem 3rem 2.5rem;}
+/* FOOTER */
+footer{background:var(--black);padding:5rem 3rem 2.5rem;border-top:1px solid var(--border);}
 .ft-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;padding-bottom:4rem;border-bottom:1px solid var(--border);}
 .ft-brand{font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:0.38em;color:var(--white);text-transform:uppercase;margin-bottom:.75rem;}
 .ft-tag{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
@@ -369,30 +181,14 @@ footer{background:var(--black);padding:5rem 3rem 2.5rem;}
 </head>
 <body>
 
-<!-- LANDING -->
-<div class="landing" id="landing">
-  <div class="land-bg" id="lbg"></div>
-  <div class="land-logo" id="llogo">DIVUS</div>
-  <div class="land-sub" id="lsub">Maison de Collection &nbsp;·&nbsp; Paris &nbsp;·&nbsp; Amsterdam</div>
-  <div class="land-hint" id="lhint">
-    <div class="land-hint-txt">Glissez vers le bas</div>
-    <div class="land-hint-mouse"><div class="land-hint-wheel"></div></div>
-  </div>
-</div>
-
-<!-- REVEAL LAYER -->
-<div class="land-reveal" id="lreveal"></div>
-
-<!-- SITE -->
-<div id="site" style="display:none;">
 
 <!-- NAV -->
-<nav class="nav" id="nav">
+<nav class="nav">
   <a class="nav-logo" href="index.html">DIVUS</a>
   <div class="nav-links">
     <a class="nl" href="collection.html">Collection</a>
     <a class="nl" href="merch.html">Merch</a>
-    <a class="nl" href="atelier.html">L'atelier</a>
+    <a class="nl active" href="atelier.html">L'atelier</a>
     <a class="nl" href="certification.html">Certification</a>
   </div>
   <div class="nav-right">
@@ -403,158 +199,232 @@ footer{background:var(--black);padding:5rem 3rem 2.5rem;}
 
 <!-- HERO -->
 <section class="hero">
-  <img class="hero-img" id="himg"
-    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=90&fit=crop&crop=center" alt="">
+  <img class="hero-img" id="hi" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=90&fit=crop&crop=center" alt="Atelier Paris">
   <div class="hero-grad"></div>
   <div class="hero-content">
     <div>
-      <div class="hero-title" id="htitle">
-        La rareté<br><em>n'est pas une promesse.</em><br>C'est un fait.
-      </div>
-      <div class="hero-actions" id="hact">
-        <a class="btn-primary" href="collection.html"><span>Voir la collection</span><span class="btn-arr">→</span></a>
-        <a class="btn-ghost" href="#concept">Le concept ↓</a>
-      </div>
+      <div class="hero-eye" id="he">L'atelier · Paris</div>
+      <div class="hero-title" id="ht">Fait à la main.<br><em>À Paris.</em></div>
     </div>
-    <div class="hero-right">
-      <div class="hero-serial-l">Série en cours</div>
-      <div class="hero-serial-v">963</div>
-      <div class="hero-serial-s">LAMBORGHINI SVJ · SERIES III<br>FABRICATUM IN GALLIA · MMXXV</div>
+    <div class="hero-right" id="hr">
+      <div class="hero-quote">"Le vêtement n'est pas un produit. Il devient une archive. Une pièce de collection. Une trace."</div>
     </div>
   </div>
-  <div class="hero-scroll" id="hscroll">
-    <div class="hero-scroll-line"></div>
-    <div class="hero-scroll-txt">Défiler</div>
+  <div class="hero-scroll" id="hs">
+    <div class="hs-line"></div>
+    <div class="hs-txt">Défiler</div>
   </div>
 </section>
 
-<!-- BAND -->
-<div class="band">
-  <div class="band-track">
-    <div class="bi"><span class="bt">Édition limitée</span><span class="bs">·</span><span class="bt">Certifié NFC</span><span class="bs">·</span><span class="bt">Numéroté individuellement</span><span class="bs">·</span><span class="bt">Never reproduced</span><span class="bs">·</span><span class="bt">Fabricatum in Gallia</span><span class="bs">·</span><span class="bt">Haute couture · Paris</span><span class="bs">·</span><span class="bt">MMXXV</span><span class="bs">·</span></div>
-    <div class="bi"><span class="bt">Édition limitée</span><span class="bs">·</span><span class="bt">Certifié NFC</span><span class="bs">·</span><span class="bt">Numéroté individuellement</span><span class="bs">·</span><span class="bt">Never reproduced</span><span class="bs">·</span><span class="bt">Fabricatum in Gallia</span><span class="bs">·</span><span class="bt">Haute couture · Paris</span><span class="bs">·</span><span class="bt">MMXXV</span><span class="bs">·</span></div>
+<!-- MANIFESTE -->
+<section class="manifeste">
+  <div class="manifeste-left rv">
+    <div class="man-eye">Le manifeste</div>
+    <div class="man-title">Le temps est le premier<br><em>artisan du luxe.</em></div>
+    <div class="rule"></div>
   </div>
-</div>
-
-<!-- CONCEPT -->
-<section id="concept" class="concept rv">
-  <div class="concept-img">
-    <img class="c-img" src="https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=900&q=85&fit=crop" alt="">
-    <div class="c-overlay"></div>
-    <div class="c-badge"><div class="c-badge-dot"></div><div class="c-badge-txt">NFC · NTAG424 · Certified</div></div>
-  </div>
-  <div class="concept-copy">
-    <div class="s-eye rv d1">Le concept</div>
-    <div class="s-head rv d2">La rareté <em>héritée.</em></div>
-    <div class="rule rv d2"></div>
-    <p class="c-body rv d2">DIVUS ne crée pas la rareté. Elle <em>l'hérite</em> de l'objet qu'elle célèbre. 963 Lamborghini SVJ produites dans le monde — 963 t-shirts DIVUS SVJ. Pas un de plus. Jamais.</p>
-    <div class="pillars rv d3">
-      <div class="pillar"><div class="p-n">I.</div><div class="p-t">Le nombre d'exemplaires est dicté par notre partenaire — pas par nous</div></div>
-      <div class="pillar"><div class="p-n">II.</div><div class="p-t">Confectionné à la main · Ateliers haute couture · Paris</div></div>
-      <div class="pillar"><div class="p-n">III.</div><div class="p-t">Puce NFC NTAG424 · Cryptographie asymétrique · Non clonable</div></div>
-      <div class="pillar"><div class="p-n">IV.</div><div class="p-t">Restock contractuellement impossible · L'objet devient une archive</div></div>
-    </div>
+  <div class="manifeste-right rv d2">
+    <p class="man-body">DIVUS ne fabrique pas simplement des vêtements. Elle <em>documente les objets qui ont marqué leur époque.</em> Chaque pièce est pensée comme une archive contemporaine, numérotée, certifiée, destinée à être transmise.</p>
+    <p class="man-body" style="margin-top:1.5rem;">Le luxe ne se démontre pas. <em>Il se possède en silence.</em> Une broderie de 4 heures sur un tissu de 400g — c'est ça, le luxe que nous fabriquons.</p>
   </div>
 </section>
 
-<!-- FULL BLEED -->
-<div class="fb rv" style="height:76vh;">
-  <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=1920&q=85&fit=crop" alt="" style="object-position:center 40%;">
+<!-- FULL BLEED 1 -->
+<div class="fb rv" style="height:75vh;">
+  <img src="https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=1920&q=85&fit=crop" alt="Mains couture" style="object-position:center 25%;">
   <div class="fb-overlay"></div>
   <div class="fb-content">
     <div class="fb-row">
-      <div class="fb-title">SERIES III — SVJ</div>
-      <div class="fb-right">Lamborghini Aventador SVJ<br>963 exemplaires · MMXXV<br>CERTIFIED · NEVER REPRODUCED</div>
+      <div class="fb-title">Confectionné à la main.</div>
+      <div class="fb-right">Atelier Paris · Haute couture<br>Savoir-faire transmis<br>Finitions individuelles</div>
     </div>
   </div>
 </div>
 
-<!-- TEASER COLLECTION -->
-<section class="teaser">
-  <div class="teaser-head rv">
-    <div><div class="s-eye" style="color:rgba(10,10,10,.35);">Pièces maîtresses</div><div class="s-head">T-shirts <em>collector.</em></div></div>
-    <a class="see-all" href="collection.html">Voir tous les drops →</a>
-  </div>
-  <div class="teaser-grid rv">
-    <div class="tc">
-      <div class="tc-iw">
-        <img class="tc-img" src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80&fit=crop" alt="">
-        <div class="tc-badge sold">Sold out</div>
-        <div class="tc-hover">Voir le détail</div>
-      </div>
-      <div class="tc-info">
-        <div class="tc-name">Drop I — Édition fondatrice</div>
-        <div class="tc-meta">100 pièces · Noir absolu · 2024</div>
-        <div class="tc-row"><span class="tc-price">1 300 €</span><span class="tc-stk out">Épuisé</span></div>
-      </div>
+<!-- PROCESS -->
+<section class="process">
+  <div class="process-eye rv">Le processus</div>
+  <div class="process-title rv d1">De la matière<br><em>à l'archive.</em></div>
+  <div class="process-steps rv d2">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Sélection matière</div>
+      <div class="step-body">Coton Supima longues fibres sélectionné manuellement · Cachemire grade A mongol · Mélange 85/15 · Grammage 400g/m²</div>
     </div>
-    <div class="tc">
-      <div class="tc-iw">
-        <img class="tc-img" src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80&fit=crop" alt="">
-        <div class="tc-badge sold">Sold out</div>
-        <div class="tc-hover">Voir le détail</div>
-      </div>
-      <div class="tc-info">
-        <div class="tc-name">Drop II — Horlogerie</div>
-        <div class="tc-meta">250 pièces · Crème ivoire · 2025</div>
-        <div class="tc-row"><span class="tc-price">1 400 €</span><span class="tc-stk out">Épuisé</span></div>
-      </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Coupe & assemblage</div>
+      <div class="step-body">Patronage individuel · Coupe à la main · Coutures chevauchées renforcées · Fil surpiqûre sélectionné par le couturier</div>
     </div>
-    <div class="tc">
-      <div class="tc-iw">
-        <img class="tc-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&fit=crop" alt="">
-        <div class="tc-badge new">Nouvelle série</div>
-        <div class="tc-hover">Ajouter au sac</div>
-      </div>
-      <div class="tc-info">
-        <div class="tc-name">Drop III — SVJ</div>
-        <div class="tc-meta">963 pièces · Gris ardoise · 2025</div>
-        <div class="tc-row"><span class="tc-price">1 490 €</span><span class="tc-stk live">312 restants</span></div>
-      </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Broderie</div>
+      <div class="step-body">Haute densité 15 fils/cm² · 4 à 6 heures par pièce · Finitions à la main · Stabilisateur thermocollant · Relief en volume</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Certification</div>
+      <div class="step-body">Puce NFC NTAG424 intégrée · Étiquette cuir gravée à chaud · Numéro de série individuel · Contrôle qualité final</div>
     </div>
   </div>
 </section>
 
-<!-- ATELIER TEASER -->
-<section class="atelier rv">
-  <div class="at-copy">
-    <div class="s-eye-white">L'atelier</div>
-    <div class="s-head" style="color:var(--white);">Fait à la main.<br><em>À Paris.</em></div>
-    <div class="rule-white"></div>
-    <p class="at-body">Chaque pièce est confectionnée dans des ateliers parisiens de haute couture. Le même savoir-faire que Chanel, Dior, Margiela. L'objet est une archive, pas un produit.</p>
-    <div class="spec-list">
-      <div class="spec"><span class="spec-k">Matière</span><span class="spec-v">Coton Supima 85% · Cachemire A 15%</span></div>
-      <div class="spec"><span class="spec-k">Grammage</span><span class="spec-v">400g / m²</span></div>
-      <div class="spec"><span class="spec-k">Finition</span><span class="spec-v">Garment washed · Broderie main</span></div>
-      <div class="spec"><span class="spec-k">Étiquette</span><span class="spec-v">Cuir pleine fleur · Gravé à chaud</span></div>
-      <div class="spec"><span class="spec-k">Origine</span><span class="spec-v">Fabricatum in Gallia</span></div>
+<!-- SPECS -->
+<section class="specs-sec">
+  <div class="specs-grid rv">
+    <div class="spec-cell">
+      <div class="spec-label">Matière principale</div>
+      <div class="spec-value">Coton Supima <em>85%</em></div>
+      <div class="spec-detail">Fibres extra-longues · Douceur supérieure · Résistance au pilling · Origine USA certifiée</div>
     </div>
-    <a class="at-link" href="atelier.html">Découvrir l'atelier →</a>
-  </div>
-  <div class="at-img-col">
-    <img class="at-img" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&q=85&fit=crop" alt="">
+    <div class="spec-cell">
+      <div class="spec-label">Matière seconde</div>
+      <div class="spec-value">Cachemire <em>Grade A · 15%</em></div>
+      <div class="spec-detail">Mongolie · Fibres 14 microns · Douceur cachemire dès le premier porter · Ne bouche pas</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Grammage</div>
+      <div class="spec-value"><em>400g</em> / m²</div>
+      <div class="spec-detail">Deux fois le grammage d'un t-shirt premium standard · Tombe parfaitement · Structure naturelle</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Traitement</div>
+      <div class="spec-value">Garment <em>washed</em></div>
+      <div class="spec-detail">Lavage enzymatique après confection · Toucher immédiatement doux · Pré-rétréci · Pas de surprises</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Broderie</div>
+      <div class="spec-value"><em>15 fils</em> / cm²</div>
+      <div class="spec-detail">Haute densité · 4 à 6 heures par pièce · Relief en volume · Finitions coupées à la main</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Étiquette</div>
+      <div class="spec-value">Cuir <em>pleine fleur</em></div>
+      <div class="spec-detail">Cuir veau · Gaufrage à chaud du numéro de série · Couture main au col · 5 × 3 cm</div>
+    </div>
   </div>
 </section>
 
-<!-- NFC STRIP -->
-<div class="nfc-strip rv">
-  <div class="nfc-strip-left">
-    <div class="nfc-dot-anim"></div>
+<!-- GRILLE PHOTOS -->
+<div class="photo-grid rv">
+  <div class="pg-cell pg-tall">
+    <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=700&q=85&fit=crop" alt="Couture main">
+    <div class="pg-cap"><div class="pg-cap-txt">Assemblage · Main · Paris</div></div>
+  </div>
+  <div class="pg-cell">
+    <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=700&q=85&fit=crop" alt="Étiquette cuir">
+    <div class="pg-cap"><div class="pg-cap-txt">Étiquette cuir · N° de série gravé</div></div>
+  </div>
+  <div class="pg-cell">
+    <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=700&q=85&fit=crop" alt="Atelier lumière">
+    <div class="pg-cap"><div class="pg-cap-txt">Atelier · Lumière naturelle · Paris</div></div>
+  </div>
+  <div class="pg-cell">
+    <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=700&q=85&fit=crop" alt="Packaging">
+    <div class="pg-cap"><div class="pg-cap-txt">Packaging · Coffret bois laqué</div></div>
+  </div>
+</div>
+
+<!-- MATERIALS -->
+<section class="materials">
+  <div class="mat-intro rv">
     <div>
-      <div class="nfc-strip-title">Approchez votre téléphone.</div>
-      <div class="nfc-strip-sub">NFC NTAG424 · Cryptographie asymétrique · Non clonable</div>
+      <div style="font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:1rem;">Matériaux</div>
+      <div class="mat-title">DIVUS ne brille pas.<br><em>DIVUS possède de la matière.</em></div>
+    </div>
+    <div class="mat-sub rv d2">Aucune finition miroir<br>Aucune dorure brillante<br>Le luxe s'exprime par la texture<br>Par le poids dans les mains<br>Par la durée dans le temps</div>
+  </div>
+  <div class="mat-grid rv d2">
+    <div class="mat-card">
+      <div class="mat-num">I</div>
+      <div class="mat-name">Coton / Cachemire</div>
+      <div class="mat-desc">Tissu principal · 85/15 · 400g/m² · Mélange propriétaire · Sensation unique au toucher</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">II</div>
+      <div class="mat-name">Cuir pleine fleur</div>
+      <div class="mat-desc">Étiquette intérieure · Cuir veau · Gaufrage à chaud · Numérotation individuelle gravée</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">III</div>
+      <div class="mat-name">Fil de broderie</div>
+      <div class="mat-desc">Haute densité · Résistance aux lavages · Couleurs stables · Finitions coupées à la main</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">IV</div>
+      <div class="mat-name">Bois laqué</div>
+      <div class="mat-desc">Coffret packaging · MDF laqué noir · Gravure laser n° de série · Charnières métal</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">V</div>
+      <div class="mat-name">Silicone NTAG424</div>
+      <div class="mat-desc">Puce NFC encapsulée · Résistance eau IP67 · Compatible lavage machine 40° · Non clonable</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-num">VI</div>
+      <div class="mat-name">Papier coton 600g</div>
+      <div class="mat-desc">Certificat d'authenticité · Gaufrage profond · Signé par le couturier · Destiné à traverser le temps</div>
     </div>
   </div>
-  <div class="nfc-strip-right">CERTIFIED<br>NEVER REPRODUCED<br>FABRICATUM IN GALLIA</div>
-  <a class="nfc-strip-cta" href="certification.html">La certification →</a>
+</section>
+
+<!-- ATELIER INFO -->
+<section class="atelier-info rv">
+  <div style="padding:5rem 0 3rem;">
+    <div style="font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:1rem;">L'atelier en chiffres</div>
+    <div style="font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.5vw,44px);color:var(--white);letter-spacing:0.03em;">Ce que chaque pièce<br><em style="font-style:italic;font-weight:300;">représente vraiment.</em></div>
+  </div>
+  <div class="ai-grid">
+    <div class="ai-cell">
+      <div class="ai-label">Temps de fabrication</div>
+      <div class="ai-value">4 à 6 heures</div>
+      <div class="ai-note">Par pièce · Broderie incluse · Finitions main · Contrôle qualité</div>
+    </div>
+    <div class="ai-cell">
+      <div class="ai-label">Intervenants</div>
+      <div class="ai-value">3 à 4 mains</div>
+      <div class="ai-note">Couturier · Brodeur · Contrôleur qualité · Signature individuelle</div>
+    </div>
+    <div class="ai-cell">
+      <div class="ai-label">Localisation</div>
+      <div class="ai-value">Paris, France</div>
+      <div class="ai-note">Atelier haute couture · Fabricatum in Gallia · Certifié origine</div>
+    </div>
+    <div class="ai-cell">
+      <div class="ai-label">Référence savoir-faire</div>
+      <div class="ai-value">Haute couture</div>
+      <div class="ai-note">Même niveau de finition que les grandes maisons parisiennes · Standards stricts</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTAS BOTTOM -->
+<div class="ctas-sec rv">
+  <a class="cta-block" href="collection.html">
+    <div>
+      <div class="ctb-eye">Pièces maîtresses</div>
+      <div class="ctb-title">Voir la<br><em>collection.</em></div>
+    </div>
+    <span class="ctb-link">Découvrir les drops →</span>
+  </a>
+  <a class="cta-block dark" href="certification.html">
+    <div>
+      <div class="ctb-eye">Technologie</div>
+      <div class="ctb-title" style="color:var(--white);">La<br><em>certification.</em></div>
+    </div>
+    <span class="ctb-link">NFC NTAG424 →</span>
+  </a>
 </div>
 
 <!-- WAITLIST -->
-<div class="wl">
-  <div class="wl-head rv">Le prochain <em>drop.</em></div>
-  <div class="wl-sub rv">Liste prioritaire · Accès 24h avant · Aucune publicité</div>
-  <div class="wl-form rv"><input class="wl-in" type="email" placeholder="votre@email.com"><button class="wl-btn">→</button></div>
-  <div class="wl-note rv">Uniquement les drops à venir</div>
+<div class="wl rv">
+  <div class="wl-head">Le prochain <em>drop.</em></div>
+  <div class="wl-sub">Liste prioritaire · Accès 24h avant · Aucune publicité</div>
+  <div class="wl-form">
+    <input class="wl-in" type="email" placeholder="votre@email.com">
+    <button class="wl-btn">→</button>
+  </div>
+  <div class="wl-note">Uniquement les drops à venir</div>
 </div>
 
 <!-- FOOTER -->
@@ -588,194 +458,26 @@ footer{background:var(--black);padding:5rem 3rem 2.5rem;}
     </div>
   </div>
   <div class="ft-bot">
-    <div class="ft-copy">© MMXXV DIVUS · Tous droits réservés · Paris · Amsterdam</div>
+    <div class="ft-copy">© MMXXV DIVUS · Tous droits réservés</div>
     <div class="ft-nfc"><div class="ft-nfc-dot"></div><div class="ft-nfc-txt">NFC · NTAG424 · Certified</div></div>
   </div>
 </footer>
 
-</div><!-- /site -->
-
 <script>
-/* ═══════════════════════════════════════════════════════
-   DIVUS — Landing scroll logic
-   - Scroll BAS sur landing  → révèle le site
-   - Scroll HAUT en top du site → remet la landing
-   - Pas de curseur custom
-═══════════════════════════════════════════════════════ */
 
-const landing  = document.getElementById('landing');
-const lreveal  = document.getElementById('lreveal');
-const site     = document.getElementById('site');
-
-let siteVisible = false;   // la landing est-elle passée ?
-let accumDown   = 0;       // accumulateur scroll bas (landing)
-const THRESHOLD = 200;     // delta molette pour déclencher
-
-/* ── INIT ── */
-window.addEventListener('load', () => {
-  /* Apparition logo */
-  setTimeout(()=>document.getElementById('lbg').classList.add('on'), 80);
-  setTimeout(()=>document.getElementById('llogo').classList.add('on'), 200);
-  setTimeout(()=>document.getElementById('lsub').classList.add('on'), 420);
-  setTimeout(()=>document.getElementById('lhint').classList.add('on'), 1900);
-
-  /* Le site est présent dans le DOM mais invisible */
-  site.style.display     = 'block';
-  site.style.visibility  = 'hidden';
-  site.style.position    = 'fixed';   /* évite qu'il scroll pendant la landing */
-  site.style.inset       = '0';
-  site.style.overflow    = 'hidden';
-  site.style.zIndex      = '800';
-  site.style.opacity     = '0';
+window.addEventListener('load',()=>{
+  const hi=document.getElementById('hi');
+  setTimeout(()=>hi.classList.add('z'),80);
+  setTimeout(()=>document.getElementById('he').classList.add('on'),200);
+  setTimeout(()=>document.getElementById('ht').classList.add('on'),400);
+  setTimeout(()=>document.getElementById('hr').classList.add('on'),700);
+  setTimeout(()=>document.getElementById('hs').classList.add('on'),1000);
+  reveal();
 });
 
-/* ── MOLETTE SUR LA LANDING ── */
-document.addEventListener('wheel', e => {
-  if(siteVisible) return;          /* si le site est déjà montré on laisse le scroll normal */
-  e.preventDefault();
-
-  const delta = e.deltaY;
-
-  if(delta > 0) {
-    /* scroll vers le BAS → on accumule */
-    accumDown += delta;
-    const progress = Math.min(1, accumDown / THRESHOLD);
-    applyProgress(progress);
-    if(progress >= 1) revealSite();
-  } else {
-    /* scroll vers le HAUT → on remet en arrière */
-    accumDown = Math.max(0, accumDown + delta * 1.5);
-    const progress = Math.min(1, accumDown / THRESHOLD);
-    applyProgress(progress);
-  }
-}, { passive: false });
-
-/* ── TOUCH ── */
-let ty0 = 0;
-document.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
-document.addEventListener('touchmove', e => {
-  if(siteVisible) return;
-  const dy = ty0 - e.touches[0].clientY;
-  if(dy > 80) revealSite();
-}, { passive: true });
-
-/* ── SCROLL EN HAUT DU SITE → REMET LA LANDING ── */
-function onSiteScroll() {
-  if(!siteVisible) return;
-  navScroll();
-  revealSections();
-
-  /* Si on est tout en haut du site, on propose de revenir à la landing */
-  if(window.scrollY === 0) {
-    returnToLanding();
-  }
-}
-
-function returnToLanding() {
-  siteVisible = false;
-  accumDown   = 0;
-
-  /* Remettre le site en position scrollable */
-  site.style.position  = 'fixed';
-  site.style.overflow  = 'hidden';
-  site.style.opacity   = '0';
-  site.style.visibility= 'hidden';
-
-  /* Remettre la landing */
-  landing.style.display      = 'flex';
-  landing.style.opacity      = '1';
-  landing.style.pointerEvents= 'auto';
-  lreveal.style.display      = 'block';
-  lreveal.style.transition   = 'none';
-  lreveal.style.transformOrigin = 'top';
-  lreveal.style.transform    = 'scaleY(1)';
-
-  /* Remettre logo */
-  const logo = document.getElementById('llogo');
-  const sub  = document.getElementById('lsub');
-  logo.style.transition = 'transform .6s, opacity .6s';
-  logo.style.transform  = 'translateY(0)';
-  logo.style.opacity    = '1';
-  sub.style.transition  = 'opacity .6s';
-  sub.style.opacity     = '1';
-}
-
-/* ── ANIMATION PROGRESSIVE (landing → site) ── */
-function applyProgress(p) {
-  const logo = document.getElementById('llogo');
-  const sub  = document.getElementById('lsub');
-  const hint = document.getElementById('lhint');
-
-  logo.style.transition = 'none';
-  logo.style.transform  = `translateY(${-p * 65}px)`;
-  logo.style.opacity    = `${Math.max(0, 1 - p * 1.2)}`;
-  sub.style.transition  = 'none';
-  sub.style.opacity     = `${Math.max(0, 1 - p * 1.8)}`;
-  if(hint) hint.style.opacity = `${Math.max(0, 1 - p * 3)}`;
-
-  lreveal.style.transition      = 'none';
-  lreveal.style.transformOrigin = 'top';
-  lreveal.style.transform       = `scaleY(${1 - p})`;
-}
-
-/* ── TRANSITION FINALE VERS LE SITE ── */
-function revealSite() {
-  if(siteVisible) return;
-  siteVisible = true;
-
-  /* Finir l'animation du rideau */
-  lreveal.style.transition      = 'transform .9s cubic-bezier(.76,0,.24,1)';
-  lreveal.style.transformOrigin = 'top';
-  lreveal.style.transform       = 'scaleY(0)';
-
-  /* Cacher la landing */
-  landing.style.transition    = 'opacity .4s .15s';
-  landing.style.opacity       = '0';
-  landing.style.pointerEvents = 'none';
-
-  /* Montrer le site */
-  site.style.visibility = 'visible';
-  site.style.transition = 'opacity .5s .2s';
-  site.style.opacity    = '1';
-
-  /* Animer le hero */
-  setTimeout(() => {
-    document.getElementById('himg').classList.add('z');
-    document.getElementById('htitle').classList.add('on');
-    document.getElementById('hact').classList.add('on');
-    document.getElementById('hscroll').classList.add('on');
-    revealSections();
-  }, 300);
-
-  /* Après la transition : libérer le scroll normal */
-  setTimeout(() => {
-    landing.style.display  = 'none';
-    lreveal.style.display  = 'none';
-
-    site.style.position    = '';
-    site.style.inset       = '';
-    site.style.overflow    = '';
-    site.style.zIndex      = '';
-
-    window.scrollTo(0, 0);
-    window.addEventListener('scroll', onSiteScroll);
-  }, 1100);
-}
-
-/* ── NAV SCROLL ── */
-function navScroll() {
-  const nav = document.getElementById('nav');
-  if(window.scrollY > 55) nav.classList.add('scrolled');
-  else nav.classList.remove('scrolled');
-}
-
-/* ── REVEAL SECTIONS AU SCROLL ── */
-const rvEls = document.querySelectorAll('.rv');
-function revealSections() {
-  rvEls.forEach(el => {
-    if(el.getBoundingClientRect().top < window.innerHeight * .9) el.classList.add('on');
-  });
-}
+const rvs=document.querySelectorAll('.rv');
+function reveal(){rvs.forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*.9)el.classList.add('on');});}
+window.addEventListener('scroll',reveal);
 </script>
 </body>
 </html>

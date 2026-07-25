@@ -17,13 +17,7 @@
   --sans:'Inter',sans-serif;
 }
 html{scroll-behavior:smooth;overflow-x:hidden;}
-body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:none;overflow-x:hidden;}
-
-/* ── CURSOR ── */
-#cur{width:7px;height:7px;background:var(--white);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s,opacity .25s;}
-#cur-r{width:34px;height:34px;border:1px solid rgba(255,255,255,0.3);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .5s,height .5s;}
-.on-light #cur{background:var(--black);}
-.on-light #cur-r{border-color:rgba(0,0,0,0.2);}
+body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased;cursor:auto;overflow-x:hidden;}
 
 /* ── NAV ── */
 .nav{
@@ -36,14 +30,14 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
 .nav-logo{
   font-family:var(--serif);font-weight:500;font-size:21px;
   letter-spacing:0.38em;color:var(--white);text-transform:uppercase;
-  text-decoration:none;cursor:none;transition:opacity .3s;
+  text-decoration:none;transition:opacity .3s;
 }
 .nav-logo:hover{opacity:.55;}
 .nav-links{display:flex;gap:2.5rem;}
 .nl{
   font-family:var(--sans);font-weight:300;font-size:10px;
   letter-spacing:0.3em;color:rgba(255,255,255,0.45);
-  text-transform:uppercase;text-decoration:none;cursor:none;
+  text-transform:uppercase;text-decoration:none;
   transition:color .25s;position:relative;
 }
 .nl::after{content:'';position:absolute;bottom:-2px;left:0;right:100%;height:1px;background:var(--white);transition:right .35s;}
@@ -53,7 +47,7 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
 .nr{
   font-family:var(--sans);font-weight:300;font-size:10px;
   letter-spacing:0.3em;color:rgba(255,255,255,0.4);
-  text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;
+  text-transform:uppercase;text-decoration:none;transition:color .25s;
 }
 .nr:hover{color:var(--white);}
 
@@ -173,7 +167,7 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
   font-family:var(--sans);font-weight:300;font-size:10px;
   letter-spacing:0.35em;color:var(--white);text-transform:uppercase;
   text-decoration:none;border:1px solid rgba(255,255,255,0.22);
-  padding:14px 28px;cursor:none;position:relative;overflow:hidden;transition:color .38s;
+  padding:14px 28px;position:relative;overflow:hidden;transition:color .38s;
 }
 .btn-primary::before{content:'';position:absolute;inset:0;background:var(--white);transform:scaleX(0);transform-origin:left;transition:transform .38s;}
 .btn-primary:hover::before{transform:scaleX(1);}
@@ -184,7 +178,7 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
 .btn-ghost{
   font-family:var(--sans);font-weight:300;font-size:10px;
   letter-spacing:0.35em;color:rgba(255,255,255,.35);
-  text-transform:uppercase;text-decoration:none;cursor:none;transition:color .25s;
+  text-transform:uppercase;text-decoration:none;transition:color .25s;
 }
 .btn-ghost:hover{color:var(--white);}
 .hero-right{text-align:right;}
@@ -270,12 +264,12 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
 .see-all{
   font-family:var(--sans);font-weight:300;font-size:10px;
   letter-spacing:0.35em;color:rgba(10,10,10,.4);text-transform:uppercase;
-  text-decoration:none;cursor:none;transition:color .25s;
+  text-decoration:none;transition:color .25s;
   display:flex;align-items:center;gap:.75rem;
 }
 .see-all:hover{color:var(--black);}
 .teaser-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-light);}
-.tc{background:var(--white);cursor:none;position:relative;overflow:hidden;}
+.tc{background:var(--white);position:relative;overflow:hidden;}
 .tc-iw{aspect-ratio:3/4;overflow:hidden;position:relative;}
 .tc-img{width:100%;height:100%;object-fit:cover;filter:brightness(.88);transition:transform .9s cubic-bezier(.25,.46,.45,.94),filter .55s;}
 .tc:hover .tc-img{transform:scale(1.05);filter:brightness(.95);}
@@ -313,7 +307,7 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
   margin-top:2.5rem;
   font-family:var(--sans);font-weight:300;font-size:10px;
   letter-spacing:0.35em;color:rgba(255,255,255,.35);
-  text-transform:uppercase;text-decoration:none;cursor:none;
+  text-transform:uppercase;text-decoration:none;
   display:inline-flex;align-items:center;gap:.875rem;transition:color .25s;
 }
 .at-link:hover{color:var(--white);}
@@ -339,7 +333,7 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
 .nfc-strip-cta{
   font-family:var(--sans);font-weight:300;font-size:10px;
   letter-spacing:0.35em;color:rgba(255,255,255,.4);
-  text-transform:uppercase;text-decoration:none;cursor:none;
+  text-transform:uppercase;text-decoration:none;
   border:1px solid rgba(255,255,255,.12);padding:12px 22px;
   transition:all .3s;white-space:nowrap;flex-shrink:0;
 }
@@ -353,7 +347,7 @@ body{background:var(--black);color:var(--white);font-family:var(--sans);-webkit-
 .wl-form{display:flex;max-width:400px;margin:0 auto 1.25rem;border-bottom:1px solid rgba(10,10,10,.18);}
 .wl-in{flex:1;border:none;background:transparent;font-family:var(--sans);font-weight:300;font-size:12px;letter-spacing:0.15em;padding:12px 0;outline:none;color:var(--black);}
 .wl-in::placeholder{color:rgba(10,10,10,.22);}
-.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--black);text-transform:uppercase;cursor:none;padding:12px 0;transition:opacity .3s;}
+.wl-btn{background:none;border:none;font-family:var(--sans);font-weight:300;font-size:11px;letter-spacing:0.4em;color:var(--black);text-transform:uppercase;padding:12px 0;transition:opacity .3s;}
 .wl-btn:hover{opacity:.4;}
 .wl-note{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.35em;color:rgba(10,10,10,.18);text-transform:uppercase;}
 
@@ -364,7 +358,7 @@ footer{background:var(--black);padding:5rem 3rem 2.5rem;}
 .ft-tag{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
 .ft-desc{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.12em;color:rgba(255,255,255,.13);line-height:2.4;text-transform:uppercase;}
 .ft-col-h{font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.52em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1.75rem;}
-.ft-l{display:block;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.13);text-transform:uppercase;margin-bottom:.875rem;text-decoration:none;cursor:none;transition:color .2s;}
+.ft-l{display:block;font-family:var(--sans);font-weight:300;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,.13);text-transform:uppercase;margin-bottom:.875rem;text-decoration:none;transition:color .2s;}
 .ft-l:hover{color:rgba(255,255,255,.45);}
 .ft-bot{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;}
 .ft-copy{font-family:var(--sans);font-weight:200;font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,.1);text-transform:uppercase;}
@@ -374,9 +368,6 @@ footer{background:var(--black);padding:5rem 3rem 2.5rem;}
 </style>
 </head>
 <body>
-
-<div id="cur"></div>
-<div id="cur-r"></div>
 
 <!-- LANDING -->
 <div class="landing" id="landing">
@@ -605,147 +596,183 @@ footer{background:var(--black);padding:5rem 3rem 2.5rem;}
 </div><!-- /site -->
 
 <script>
-/* ── CURSOR ── */
-const cur=document.getElementById('cur'),cr=document.getElementById('cur-r');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(loop);})();
+/* ═══════════════════════════════════════════════════════
+   DIVUS — Landing scroll logic
+   - Scroll BAS sur landing  → révèle le site
+   - Scroll HAUT en top du site → remet la landing
+   - Pas de curseur custom
+═══════════════════════════════════════════════════════ */
 
-/* ── LANDING INIT ── */
-let revealed=false;
-let wheelAccum=0;          // accumulateur molette
-const WHEEL_THRESHOLD=180; // delta total avant déclenchement
-const landing=document.getElementById('landing');
-const lreveal=document.getElementById('lreveal');
+const landing  = document.getElementById('landing');
+const lreveal  = document.getElementById('lreveal');
+const site     = document.getElementById('site');
 
-window.addEventListener('load',()=>{
-  // Apparition séquentielle du logo
-  setTimeout(()=>document.getElementById('lbg').classList.add('on'),80);
-  setTimeout(()=>document.getElementById('llogo').classList.add('on'),180);
-  setTimeout(()=>document.getElementById('lsub').classList.add('on'),400);
-  setTimeout(()=>document.getElementById('lhint').classList.add('on'),1800);
-  // Préparer le site derrière la landing (invisible)
-  const s=document.getElementById('site');
-  s.style.display='block';
-  s.style.visibility='hidden';
+let siteVisible = false;   // la landing est-elle passée ?
+let accumDown   = 0;       // accumulateur scroll bas (landing)
+const THRESHOLD = 200;     // delta molette pour déclencher
+
+/* ── INIT ── */
+window.addEventListener('load', () => {
+  /* Apparition logo */
+  setTimeout(()=>document.getElementById('lbg').classList.add('on'), 80);
+  setTimeout(()=>document.getElementById('llogo').classList.add('on'), 200);
+  setTimeout(()=>document.getElementById('lsub').classList.add('on'), 420);
+  setTimeout(()=>document.getElementById('lhint').classList.add('on'), 1900);
+
+  /* Le site est présent dans le DOM mais invisible */
+  site.style.display     = 'block';
+  site.style.visibility  = 'hidden';
+  site.style.position    = 'fixed';   /* évite qu'il scroll pendant la landing */
+  site.style.inset       = '0';
+  site.style.overflow    = 'hidden';
+  site.style.zIndex      = '800';
+  site.style.opacity     = '0';
 });
 
-/* ── MOUSE MOVE REVEAL ──
-   La souris descend dans la moitié basse de l'écran → progress 0→1.
-   Le logo monte et s'estompe, le rideau noir se lève.
-   Quand la souris atteint le bas de l'écran → transition finale.
-*/
-let lastMouseY = -1;
-document.addEventListener('mousemove', e => {
-  if(revealed) return;
+/* ── MOLETTE SUR LA LANDING ── */
+document.addEventListener('wheel', e => {
+  if(siteVisible) return;          /* si le site est déjà montré on laisse le scroll normal */
+  e.preventDefault();
 
-  const y = e.clientY;
-  const h = window.innerHeight;
+  const delta = e.deltaY;
 
-  // On commence à réagir à partir du milieu de l'écran
-  const start = h * 0.35;
-  const progress = Math.min(1, Math.max(0, (y - start) / (h - start)));
+  if(delta > 0) {
+    /* scroll vers le BAS → on accumule */
+    accumDown += delta;
+    const progress = Math.min(1, accumDown / THRESHOLD);
+    applyProgress(progress);
+    if(progress >= 1) revealSite();
+  } else {
+    /* scroll vers le HAUT → on remet en arrière */
+    accumDown = Math.max(0, accumDown + delta * 1.5);
+    const progress = Math.min(1, accumDown / THRESHOLD);
+    applyProgress(progress);
+  }
+}, { passive: false });
 
-  lastMouseY = y;
+/* ── TOUCH ── */
+let ty0 = 0;
+document.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchmove', e => {
+  if(siteVisible) return;
+  const dy = ty0 - e.touches[0].clientY;
+  if(dy > 80) revealSite();
+}, { passive: true });
 
+/* ── SCROLL EN HAUT DU SITE → REMET LA LANDING ── */
+function onSiteScroll() {
+  if(!siteVisible) return;
+  navScroll();
+  revealSections();
+
+  /* Si on est tout en haut du site, on propose de revenir à la landing */
+  if(window.scrollY === 0) {
+    returnToLanding();
+  }
+}
+
+function returnToLanding() {
+  siteVisible = false;
+  accumDown   = 0;
+
+  /* Remettre le site en position scrollable */
+  site.style.position  = 'fixed';
+  site.style.overflow  = 'hidden';
+  site.style.opacity   = '0';
+  site.style.visibility= 'hidden';
+
+  /* Remettre la landing */
+  landing.style.display      = 'flex';
+  landing.style.opacity      = '1';
+  landing.style.pointerEvents= 'auto';
+  lreveal.style.display      = 'block';
+  lreveal.style.transition   = 'none';
+  lreveal.style.transformOrigin = 'top';
+  lreveal.style.transform    = 'scaleY(1)';
+
+  /* Remettre logo */
+  const logo = document.getElementById('llogo');
+  const sub  = document.getElementById('lsub');
+  logo.style.transition = 'transform .6s, opacity .6s';
+  logo.style.transform  = 'translateY(0)';
+  logo.style.opacity    = '1';
+  sub.style.transition  = 'opacity .6s';
+  sub.style.opacity     = '1';
+}
+
+/* ── ANIMATION PROGRESSIVE (landing → site) ── */
+function applyProgress(p) {
   const logo = document.getElementById('llogo');
   const sub  = document.getElementById('lsub');
   const hint = document.getElementById('lhint');
 
-  // Logo monte et s'efface progressivement
   logo.style.transition = 'none';
-  logo.style.transform  = `translateY(${-progress * 70}px)`;
-  logo.style.opacity    = `${1 - progress * 1.15}`;
+  logo.style.transform  = `translateY(${-p * 65}px)`;
+  logo.style.opacity    = `${Math.max(0, 1 - p * 1.2)}`;
+  sub.style.transition  = 'none';
+  sub.style.opacity     = `${Math.max(0, 1 - p * 1.8)}`;
+  if(hint) hint.style.opacity = `${Math.max(0, 1 - p * 3)}`;
 
-  // Sous-titre s'efface plus vite
-  sub.style.transition = 'none';
-  sub.style.opacity    = `${Math.max(0, 1 - progress * 1.8)}`;
-
-  // Hint s'efface immédiatement
-  if(hint) hint.style.opacity = `${Math.max(0, 1 - progress * 3)}`;
-
-  // Rideau noir part du haut et se lève
   lreveal.style.transition      = 'none';
   lreveal.style.transformOrigin = 'top';
-  lreveal.style.transform       = `scaleY(${1 - progress})`;
+  lreveal.style.transform       = `scaleY(${1 - p})`;
+}
 
-  // Déclencher la transition finale dès que progress ≥ 1
-  if(progress >= 1) triggerReveal();
-});
+/* ── TRANSITION FINALE VERS LE SITE ── */
+function revealSite() {
+  if(siteVisible) return;
+  siteVisible = true;
 
-/* Fallback touch — swipe vers le haut */
-let touchStartY = 0;
-document.addEventListener('touchstart', e=>{ touchStartY = e.touches[0].clientY; }, {passive:true});
-document.addEventListener('touchmove', e=>{
-  if(revealed) return;
-  const dy = touchStartY - e.touches[0].clientY;
-  if(dy > 80) triggerReveal();
-}, {passive:true});
-
-/* Fallback molette — au cas où l'utilisateur scrolle quand même */
-document.addEventListener('wheel', e=>{
-  if(revealed) return;
-  e.preventDefault();
-  wheelAccum += Math.abs(e.deltaY);
-  const progress = Math.min(1, wheelAccum / WHEEL_THRESHOLD);
-  const logo = document.getElementById('llogo');
-  const sub  = document.getElementById('lsub');
-  logo.style.transition = 'none';
-  logo.style.transform  = `translateY(${-progress * 70}px)`;
-  logo.style.opacity    = `${1 - progress * 1.15}`;
-  sub.style.opacity     = `${Math.max(0, 1 - progress * 1.8)}`;
-  lreveal.style.transition      = 'none';
+  /* Finir l'animation du rideau */
+  lreveal.style.transition      = 'transform .9s cubic-bezier(.76,0,.24,1)';
   lreveal.style.transformOrigin = 'top';
-  lreveal.style.transform       = `scaleY(${1 - progress})`;
-  if(progress >= 1) triggerReveal();
-}, { passive: false });
+  lreveal.style.transform       = 'scaleY(0)';
 
-/* ── TRANSITION FINALE ── */
-function triggerReveal(){
-  if(revealed) return;
-  revealed=true;
-
-  // 1. Le voile noir monte et disparaît
-  lreveal.style.transition = 'transform 1.1s cubic-bezier(.76,0,.24,1)';
-  lreveal.style.transformOrigin = 'top';
-  lreveal.style.transform = 'scaleY(0)';
-
-  // 2. La landing s'efface
-  landing.style.transition = 'opacity .5s .2s';
-  landing.style.opacity = '0';
+  /* Cacher la landing */
+  landing.style.transition    = 'opacity .4s .15s';
+  landing.style.opacity       = '0';
   landing.style.pointerEvents = 'none';
 
-  // 3. Le site devient visible
-  document.getElementById('site').style.visibility = 'visible';
+  /* Montrer le site */
+  site.style.visibility = 'visible';
+  site.style.transition = 'opacity .5s .2s';
+  site.style.opacity    = '1';
 
-  // 4. Animer le hero
-  setTimeout(()=>{
+  /* Animer le hero */
+  setTimeout(() => {
     document.getElementById('himg').classList.add('z');
     document.getElementById('htitle').classList.add('on');
     document.getElementById('hact').classList.add('on');
     document.getElementById('hscroll').classList.add('on');
     revealSections();
-  }, 250);
+  }, 300);
 
-  // 5. Nettoyer
-  setTimeout(()=>{
-    landing.style.display = 'none';
-    lreveal.style.display = 'none';
-    window.addEventListener('scroll', ()=>{ navScroll(); revealSections(); });
-  }, 1200);
+  /* Après la transition : libérer le scroll normal */
+  setTimeout(() => {
+    landing.style.display  = 'none';
+    lreveal.style.display  = 'none';
+
+    site.style.position    = '';
+    site.style.inset       = '';
+    site.style.overflow    = '';
+    site.style.zIndex      = '';
+
+    window.scrollTo(0, 0);
+    window.addEventListener('scroll', onSiteScroll);
+  }, 1100);
 }
 
 /* ── NAV SCROLL ── */
-function navScroll(){
+function navScroll() {
   const nav = document.getElementById('nav');
   if(window.scrollY > 55) nav.classList.add('scrolled');
   else nav.classList.remove('scrolled');
 }
 
-/* ── REVEAL AU SCROLL ── */
+/* ── REVEAL SECTIONS AU SCROLL ── */
 const rvEls = document.querySelectorAll('.rv');
-function revealSections(){
-  rvEls.forEach(el=>{
+function revealSections() {
+  rvEls.forEach(el => {
     if(el.getBoundingClientRect().top < window.innerHeight * .9) el.classList.add('on');
   });
 }
